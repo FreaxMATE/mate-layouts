@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+ <id>org.github.FreaxMATE.mate-layouts</id>
+ <metadata_license>CC0-1.0</metadata_license>
+ <project_license>GPL-3.0+</project_license>
+ <name>MATE Layouts</name>
+ <summary>A gtk-based panel layout switcher for the MATE Desktop</summary>
+ <description><p>Switch your Panel Layout</p></description>
+ <url type="homepage">https://github.com/FreaxMATE/mate-layouts</url>
+ <project_group>mate-layouts</project_group>
+</component>

@@ -1,1 +1,1 @@
-# mate-layouts
+# MATE Layouts

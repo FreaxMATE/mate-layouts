@@ -1,0 +1,17 @@
+[Desktop Entry]
+Name[en_GB]=org.github.FreaxMATE.mate-layouts.desktop
+Name=MATE Layouts
+GenericName[en_GB]=Panel layout switcher
+GenericName=Panel layout switcher
+Comment[en_GB]=Pick your favourite panel layout
+Comment=Pick your favourite panel layout
+Exec=mate-layouts
+Terminal=false
+Type=Application
+StartupNotify=true
+# Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+Icon=org.github.FreaxMATE.mate-layouts.svg
+Categories=Settings;GNOME;GTK;
+# Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+Keywords=panel;configure;layout;switch;
+
