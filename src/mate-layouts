@@ -1,22 +1,19 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2007-2014 by Clement Lefebvre <root@linuxmint.com>
-# Copyright (C) 2015-2018 Martin Wimpress <code@ubuntu-mate.org>
+# Copyright (C) 2020 Konstantin Unruh <freaxmate@protonmail.com>
 #
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
+
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
+
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the
-# Free Software Foundation, Inc.,
-# 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
 import distro
@@ -59,7 +56,7 @@ from gi.repository import Notify
 # Workaround introspection bug, gnome bug 622084
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-__VERSION__ = '20.10.0'
+__VERSION__ = '0.0.1'
 
 __TILDA__ = """[Desktop Entry]
 Name=Tilda
@@ -1108,11 +1105,13 @@ class MateLayouts:
 
         # Load the Glade UI file
         self.builder = Gtk.Builder()
-        if os.path.exists('../data/mate-layouts.ui'):
+        if os.path.exists('../data/org.github.FreaxMATE.mate-layouts.ui'):
             print('Development mode.')
-            self.builder.add_from_file('../data/mate-layouts.ui')
+            self.builder.add_from_file('../data/org.github.FreaxMATE.mate-layouts.ui')
+        elif os.path.exists('/usr/lib/mate-layouts/org.github.FreaxMATE.mate-layouts.ui'):
+            self.builder.add_from_file('/usr/lib/mate-layouts/org.github.FreaxMATE.mate-layouts.ui')
         else:
-            self.builder.add_from_file('/usr/lib/mate-layouts/mate-layouts.ui')
+            print("ERROR! Unable to find glade file")
 
         self.window = self.builder.get_object( "main_window" )
         self.builder.get_object("button_save_panels").connect("clicked", self.save_panels)
