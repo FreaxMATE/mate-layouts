@@ -866,12 +866,12 @@ class MateLayouts:
         layout_thumbnails = []
 
         for i in layouts:
-           if os.path.exists('/usr/share/mate-layouts/layout-thumbnails/' + i + '.svg'):
-              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file('/usr/share/mate-layouts/layout-thumbnails/' + i + '.svg'))
-           elif os.path.exists('/usr/local/share/mate-layouts/layout-thumbnails/' + i + '.svg'):
-              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file('/usr/local/share/mate-layouts/layout-thumbnails/' + i + '.svg'))
-           elif os.path.exists('../data/layout-thumbnails/' + i + '.svg'):
-              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file('../data/layout-thumbnails/' + i + '.svg'))
+           if os.path.exists('/usr/share/mate-layouts/layout-previews/' + i + '.svg'):
+              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/share/mate-layouts/layout-previews/' + i + '.svg', 192, 108))
+           elif os.path.exists('/usr/local/share/mate-layouts/layout-previews/' + i + '.svg'):
+              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/local/share/mate-layouts/layout-previews/' + i + '.svg', 192, 108))
+           elif os.path.exists('../data/layout-previews/' + i + '.svg'):
+              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('../data/layout-previews/' + i + '.svg', 192, 108))
            else:
               layout_thumbnails.append(Gtk.IconTheme.get_default().load_icon("image-missing", 64, 0))
 
