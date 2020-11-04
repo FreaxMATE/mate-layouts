@@ -859,19 +859,19 @@ class MateLayouts:
         panels = self.builder.get_object("layout_list")
 
         layouts = ['contemporary', 'eleven', 'eleven-no-indicators', 'familiar', 'fedora',
-                   'default', 'linuxmint', 'mageia', 'manjaro', 'mutiny, mutiny-no-indicators',
+                   'default', 'linuxmint', 'mageia', 'manjaro', 'mutiny', 'mutiny-no-indicators',
                    'netbook', 'netbook-no-indicators', 'opensuse', 'pantheon', 'redmond',
                    'redmond-no-indicators', 'solus', 'ubuntu-mate']
 
         layout_thumbnails = []
 
         for i in layouts:
-           if os.path.exists('/usr/share/mate-layouts/layout-previews/' + i + '.svg'):
-              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/share/mate-layouts/layout-previews/' + i + '.svg', 192, 108))
-           elif os.path.exists('/usr/local/share/mate-layouts/layout-previews/' + i + '.svg'):
-              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/local/share/mate-layouts/layout-previews/' + i + '.svg', 192, 108))
-           elif os.path.exists('../data/layout-previews/' + i + '.svg'):
-              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('../data/layout-previews/' + i + '.svg', 192, 108))
+           if os.path.exists('/usr/share/mate-layouts/layout-previews/' + i + '.png'):
+              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/share/mate-layouts/layout-previews/' + i + '.png', 280, 210))
+           elif os.path.exists('/usr/local/share/mate-layouts/layout-previews/' + i + '.png'):
+              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/local/share/mate-layouts/layout-previews/' + i + '.png', 280, 210))
+           elif os.path.exists('../data/layout-previews/' + i + '.png'):
+              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('../data/layout-previews/' + i + '.png', 280, 210))
            else:
               layout_thumbnails.append(Gtk.IconTheme.get_default().load_icon("image-missing", 64, 0))
 
@@ -1108,8 +1108,8 @@ class MateLayouts:
         if os.path.exists('../data/org.github.FreaxMATE.mate-layouts.ui'):
             print('Development mode.')
             self.builder.add_from_file('../data/org.github.FreaxMATE.mate-layouts.ui')
-        elif os.path.exists('/usr/lib/mate-layouts/org.github.FreaxMATE.mate-layouts.ui'):
-            self.builder.add_from_file('/usr/lib/mate-layouts/org.github.FreaxMATE.mate-layouts.ui')
+        elif os.path.exists('/usr/share/mate-layouts/org.github.FreaxMATE.mate-layouts.ui'):
+            self.builder.add_from_file('/usr/share/mate-layouts/org.github.FreaxMATE.mate-layouts.ui')
         else:
             print("ERROR! Unable to find glade file")
 

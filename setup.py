@@ -42,7 +42,15 @@ PROGRAM_VERSION = __VERSION__
 
 data_files = [
     ('{prefix}/share/applications'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.desktop',]),
-    ('{prefix}/lib/mate-layouts'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.ui', 'src/mate-layouts-helper']),
+    ('{prefix}/lib/mate-layouts'.format(prefix=sys.prefix), ['src/mate-layouts-helper']),
+    ('{prefix}/share/mate-layouts/'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.ui']),
+
+    # layout previews
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/default.png']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/fedora.png']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/manjaro.png']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/opensuse.png']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/redmond-no-indicators.png']),
 ]
 
 setup(
