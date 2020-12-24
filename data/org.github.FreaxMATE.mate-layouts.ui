@@ -1,26 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.36.0 -->
+<!-- Generated with glade 3.38.1 -->
 <interface>
   <requires lib="gtk+" version="3.12"/>
+  <object class="GtkImage" id="img_cancel">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">process-stop</property>
+  </object>
   <object class="GtkImage" id="img_close">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">window-close</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">window-close</property>
   </object>
   <object class="GtkImage" id="img_delete">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">edit-delete</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">edit-delete</property>
   </object>
   <object class="GtkImage" id="img_help">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">help-browser-symbolic</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">help-browser-symbolic</property>
+  </object>
+  <object class="GtkImage" id="img_ok">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">object-select</property>
+  </object>
+  <object class="GtkDialog" id="layout_name_dialog">
+    <property name="can-focus">False</property>
+    <property name="border-width">6</property>
+    <property name="title" translatable="yes">Panel layout name</property>
+    <property name="type-hint">dialog</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-top">12</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="layout_name_dialog_cancel_button">
+                <property name="label" translatable="yes">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="image">img_cancel</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="layout_name_dialog_close_button">
+                <property name="label" translatable="yes">OK</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="image">img_ok</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="layout_name_dialog_label">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-bottom">12</property>
+            <property name="label" translatable="yes">Enter the name for your panel layout.</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="layout_name_dialog_entry">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-6">layout_name_dialog_cancel_button</action-widget>
+      <action-widget response="-5">layout_name_dialog_close_button</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkImage" id="img_save_as">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">document-save-as</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">document-save-as</property>
   </object>
   <object class="GtkListStore" id="layout_list">
     <columns>
@@ -33,34 +124,34 @@
     </columns>
   </object>
   <object class="GtkDialog" id="main_window">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="title" translatable="yes">MATE Layouts</property>
-    <property name="default_width">990</property>
-    <property name="default_height">650</property>
-    <property name="type_hint">normal</property>
-    <property name="startup_id">org.github.FreaxMATE.MateLayouts</property>
+    <property name="default-width">990</property>
+    <property name="default-height">650</property>
+    <property name="type-hint">normal</property>
+    <property name="startup-id">org.github.FreaxMATE.MateLayouts</property>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
-        <property name="margin_start">4</property>
-        <property name="margin_end">4</property>
-        <property name="margin_top">4</property>
-        <property name="margin_bottom">4</property>
+        <property name="can-focus">False</property>
+        <property name="margin-start">4</property>
+        <property name="margin-end">4</property>
+        <property name="margin-top">4</property>
+        <property name="margin-bottom">4</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="helpbutton">
                 <property name="label" translatable="yes">_Help</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="receives_default">False</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">False</property>
                 <property name="image">img_help</property>
-                <property name="use_underline">True</property>
+                <property name="use-underline">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -72,11 +163,11 @@
               <object class="GtkButton" id="closebutton">
                 <property name="label" translatable="yes">_Close</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="receives_default">False</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">False</property>
                 <property name="image">img_close</property>
-                <property name="use_underline">True</property>
+                <property name="use-underline">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -94,30 +185,30 @@
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="border_width">12</property>
+            <property name="can-focus">False</property>
+            <property name="border-width">12</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkScrolledWindow">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="border_width">12</property>
-                    <property name="shadow_type">in</property>
+                    <property name="can-focus">True</property>
+                    <property name="border-width">12</property>
+                    <property name="shadow-type">in</property>
                     <child>
                       <object class="GtkIconView" id="layout_view">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
+                        <property name="can-focus">True</property>
                         <property name="margin">16</property>
                         <property name="model">layout_list</property>
-                        <property name="item_width">0</property>
-                        <property name="row_spacing">16</property>
-                        <property name="column_spacing">28</property>
-                        <property name="item_padding">0</property>
+                        <property name="item-width">0</property>
+                        <property name="row-spacing">16</property>
+                        <property name="column-spacing">28</property>
+                        <property name="item-padding">0</property>
                       </object>
                     </child>
                   </object>
@@ -137,8 +228,8 @@
             <child>
               <object class="GtkButtonBox">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="layout_style">end</property>
+                <property name="can-focus">False</property>
+                <property name="layout-style">end</property>
                 <child>
                   <placeholder/>
                 </child>
@@ -146,11 +237,11 @@
                   <object class="GtkButton" id="button_save_panels">
                     <property name="label" translatable="yes">Save as</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="tooltip_text" translatable="yes">Save your current panel layout.</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">Save your current panel layout.</property>
                     <property name="image">img_save_as</property>
-                    <property name="always_show_image">True</property>
+                    <property name="always-show-image">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -162,9 +253,9 @@
                   <object class="GtkButton" id="button_delete_panel">
                     <property name="label">Delete</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="tooltip_text" translatable="yes">Delete the currently selected  panel layout.</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">Delete the currently selected  panel layout.</property>
                     <property name="image">img_delete</property>
                   </object>
                   <packing>
@@ -193,8 +284,5 @@
       <action-widget response="-11">helpbutton</action-widget>
       <action-widget response="-7">closebutton</action-widget>
     </action-widgets>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
   </object>
 </interface>
