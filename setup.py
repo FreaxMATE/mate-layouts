@@ -44,6 +44,7 @@ data_files = [
     ('{prefix}/share/applications'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.desktop',]),
     ('{prefix}/lib/mate-layouts'.format(prefix=sys.prefix), ['src/mate-layouts-helper']),
     ('{prefix}/share/mate-layouts/'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.ui']),
+    ('{prefix}/share/polkit-1/actions'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.policy',]),
 
     # layout previews
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/default.png']),
