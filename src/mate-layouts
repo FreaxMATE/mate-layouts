@@ -156,20 +156,6 @@ gettext.install('mate-layouts', os.path.join('/','usr','share','locale'))
 class MateLayouts:
     system_installed_panel_layouts = []
 
-    def on_checkbox_toggled(self, widget, schema_id, key):
-        if (key == "reduced-resources"):
-            if ('marco' in self.current_wm):
-                marco_reduced = self.get_bool('org.mate.Marco.general', None, key)
-                if self.schema_has_key('org.mate.Marco.general','side-by-side-tiling'):
-                    self.set_bool('org.mate.Marco.general', None, 'side-by-side-tiling', marco_reduced)
-                elif self.schema_has_key('org.mate.Marco.general','allow-tiling'):
-                    self.set_bool('org.mate.Marco.general', None, 'allow-tiling', marco_reduced)
-                self.builder.get_object('checkbox_snapping').props.sensitive = marco_reduced
-
-        # If desktop icons are shown or hidden, enable or not further modifications
-        elif schema_id == "org.mate.background":
-            self.toggle_desktop_icons_sensitiveness()
-
     def schema_has_key(self, schema, key):
         source = Gio.SettingsSchemaSource.get_default()
         if source.lookup(schema, True):
@@ -249,15 +235,6 @@ class MateLayouts:
         dconf = subprocess.Popen(['dconf', 'read', path], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         dconf_output, dconf_error = dconf.communicate()
         return dconf_output.decode().strip()
-
-    def init_checkbox(self, schema_id, key, name):
-        source = Gio.SettingsSchemaSource.get_default()
-        schema = source.lookup(schema_id, True)
-        if schema:
-            settings = Gio.Settings.new_full(schema)
-            widget = self.builder.get_object(name)
-            settings.bind(key, widget, "active", Gio.SettingsBindFlags.DEFAULT)
-            widget.connect("toggled", self.on_checkbox_toggled, schema_id, key)
 
     def process_running(self, name):
         uid = os.getuid()
@@ -343,29 +320,6 @@ class MateLayouts:
         print('Got ' + str(num_workspaces) + ' workspaces from ' + self.current_wm)
         return num_workspaces
 
-    def enable_hud(self):
-        # Remove old-style autostart .desktop file for mate-hud
-        self.remove_autostart('mate-hud.desktop')
-        if self.hud_available and not self.process_running('mate-hud'):
-            if self.schema_has_key('org.mate.hud', 'enabled'):
-                self.set_bool('org.mate.hud', None, 'enabled', True)
-            pid = subprocess.Popen(['/usr/lib/mate-hud/mate-hud'], stdout=DEVNULL, stderr=DEVNULL).pid
-            self.hud_enabled = True
-
-    def disable_hud(self):
-        # Remove old-style autostart .desktop file for mate-hud
-        self.remove_autostart('mate-hud.desktop')
-        if self.schema_has_key('org.mate.hud', 'enabled'):
-            self.set_bool('org.mate.hud', None, 'enabled', False)
-        self.kill_process('mate-hud')
-        self.hud_enabled = False
-
-    def toggle_hud(self, checkbutton):
-        if checkbutton.get_active():
-            self.enable_hud()
-        else:
-            self.disable_hud()
-
     def check_appmenu(self):
         self.appmenu_available = False
         if self.schema_has_key('org.mate.interface', 'gtk-shell-shows-menubar') \
@@ -414,24 +368,6 @@ class MateLayouts:
             self.remove_autostart(self.dock + '.desktop')
         self.kill_process(self.dock)
         self.dock_enabled = False
-
-    def enable_pulldown_terminal(self):
-        if self.pulldown_terminal == 'tilda':
-            self.create_autostart(self.pulldown_terminal + '.desktop', __TILDA__)
-
-            # Launch tilda, if it is not already enabled.
-            if not self.pulldown_terminal_enabled:
-                pid = subprocess.Popen([self.pulldown_terminal], stdout=DEVNULL, stderr=DEVNULL).pid
-                self.pulldown_terminal_enabled = True
-
-    def disable_pulldown_terminal(self):
-        if self.pulldown_terminal == 'tilda':
-            self.remove_autostart(self.pulldown_terminal + '.desktop')
-
-        if self.process_running(self.pulldown_terminal):
-            self.kill_process(self.pulldown_terminal)
-
-        self.pulldown_terminal_enabled = False
 
     def enable_volume_control_applet(self):
         if os.path.exists('/usr/lib/mate-media/mate-volume-control-applet'):
@@ -493,16 +429,6 @@ class MateLayouts:
         # Note the double .desktop suffix.
         self.remove_autostart('mate-volume-control-applet.desktop.desktop')
         self.remove_autostart('mate-volume-control-status-icon.desktop.desktop')
-
-    def toggle_desktop_icons_sensitiveness(self):
-        sensitiveness = self.builder.get_object("checkbox_show_icons").get_active()
-        self.builder.get_object("caption_desktop_icons").set_sensitive(sensitiveness)
-        self.builder.get_object("checkbox_computer").set_sensitive(sensitiveness)
-        self.builder.get_object("checkbox_computer").set_sensitive(sensitiveness)
-        self.builder.get_object("checkbox_home").set_sensitive(sensitiveness)
-        self.builder.get_object("checkbox_network").set_sensitive(sensitiveness)
-        self.builder.get_object("checkbox_trash").set_sensitive(sensitiveness)
-        self.builder.get_object("checkbox_volumes").set_sensitive(sensitiveness)
 
     def panel_layout_uses(self, applet, panel_layout):
         try:
@@ -736,58 +662,8 @@ class MateLayouts:
         print ('Current layout: ' + self.current_layout)
         self.update_panel_layout_ui(self.current_layout)
 
-    def toggle_panel_features(self, widget):
-        self.reload_panel()
-
-    def toggle_dock(self, checkbutton):
-        if checkbutton.get_active():
-            self.enable_dock()
-        else:
-            self.disable_dock()
-
     def panel_layout_exists(self, panel_layout):
         return os.path.exists('/usr/share/mate-panel/layouts/' + panel_layout + '.layout')
-
-    def additional_tweaks(self, schema, key, value):
-        if schema == "org.mate.Marco.general" and key == "button-layout":
-            # If the button-layout is changed in MATE reflect that change
-            # for GTK3 and GNOME.
-            self.set_string("org.mate.interface", None, "gtk-decoration-layout", value)
-            self.set_string("org.gnome.desktop.wm.preferences", None, "button-layout", value)
-
-        elif (schema == "org.mate.interface" and key == "enable-animations"):
-            self.set_bool('org.mate.panel', None, 'enable-aniations', value)
-            self.set_bool('org.mate.interface', None, 'gtk-enable-aniations', value)
-            self.set_bool('org.gnome.desktop.interface', None, 'enable-aniations', value)
-
-        elif (schema == "org.gnome.desktop.interface" and key == "enable-animations"):
-            self.set_bool('org.mate.panel', None, 'enable-aniations', value)
-            self.set_bool('org.mate.interface', None, 'gtk-enable-aniations', value)
-            self.set_bool('org.mate.interface', None, 'enable-aniations', value)
-
-        elif schema == "org.mate.session.required-components" and key == "windowmanager":
-            # If the window manager is being changed, replace it now!
-            wm = value
-            self.replace_windowmanager(wm)
-            self.update_windowmanager_widgets()
-
-        elif schema == 'org.mate.interface' and key == 'window-scaling-factor':
-            # If window scaling is being changed make sure mate-panel is still running
-            time.sleep(0.5)
-            if not self.process_running('mate-panel'):
-                self.reload_panel()
-
-        elif schema == "org.mate.panel" and key == "default-layout":
-            panel_layout = value
-            title = _('Change the layout?')
-            text = _('<b>Changing the layout will completely replace and reset the current configuration!</b>\n\nAre you sure you want to replace this layout and potentially lose any customizations you might have made?')
-            if self.confirm_dialog(title, text):
-                self.replace_panel_layout(panel_layout)
-
-        elif schema == "org.mate.panel.menubar":
-            if key == "icon-size" or key == "item-icon-size":
-                self.set_string("org.mate.panel.menubar", None, key, value)
-                self.reload_panel()
 
     def check_dock_features(self):
         # Order matters. Plank is preferred.
@@ -874,7 +750,6 @@ class MateLayouts:
               layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('../data/layout-previews/' + i + '.png', 280, 210))
            else:
               layout_thumbnails.append(Gtk.IconTheme.get_default().load_icon("image-missing", 64, 0))
-
 
         if self.panel_layout_exists('contemporary') and \
            self.appmenu_applet_available and \
@@ -1015,7 +890,6 @@ class MateLayouts:
         return result
 
     def ask_for_layout_name(self):
-
         dialog = self.builder.get_object("layout_name_dialog")
         dialog.show_all()
         response = dialog.run()
@@ -1026,7 +900,6 @@ class MateLayouts:
             return name
         else:
             return None
-
 
 
     def delete_panel(self, widget):
@@ -1053,6 +926,7 @@ class MateLayouts:
                 source = Gio.SettingsSchemaSource.get_default()
 
     def save_panels(self, widget):
+        # layout name dialog
         layoutname = self.ask_for_layout_name()
         if layoutname is not None:
             layoutnameprefix = self.get_custom_layout_file_prefix(self.current_layout)
@@ -1114,12 +988,9 @@ class MateLayouts:
 
         response = self.window.run()
 
-#        if response == Gtk.ResponseType.CLOSE:
-#            print("The Close button was clicked")
-#        elif response == Gtk.ResponseType.HELP:
-#            print("The Help button was clicked")
+        if response == Gtk.ResponseType.CLOSE:
+           self.window.destroy()
 
-        self.window.destroy()
 
 if __name__ == "__main__":
     setproctitle.setproctitle('mate-layouts')
