@@ -507,28 +507,17 @@ class MateLayouts:
     def reload_panel(self):
         pid = subprocess.Popen(['mate-panel', '--replace'], stdout=DEVNULL, stderr=DEVNULL).pid
 
-    def confirm_dialog(self, title, text):
-        dialog = Gtk.Dialog(title, transient_for=parent, flags=0)
-        dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK)
-
-        dialog.set_default_size(500, 160)
-
-        label = Gtk.Label(text)
-        label.set_use_markup(True)
-
-        box = dialog.get_content_area()
-        box.set_border_width(12)
-        box.add(label)
+    def confirm_dialog(self):
+        dialog = self.builder.get_object("confirm_dialog")
         dialog.show_all()
-
         response = dialog.run()
-        dialog.destroy()
+        dialog.hide()
 
-        confirmed = False
-        if response == Gtk.ResponseType.OK:
-            confirmed = True
+        if (response == Gtk.ResponseType.OK):
+            return True
 
-        return confirmed
+        return False
+
 
     def replace_panel_layout(self, new_layout, called_from_api=False):
         leds_enabled = self.get_bool('org.mate.peripherals-keyboard-xkb.general', None, 'duplicate-leds')
@@ -733,7 +722,7 @@ class MateLayouts:
     def make_list_of_panel_layouts(self):
         # Panel layouts
         panels = self.builder.get_object("layout_list")
-
+        panels.clear()
         layouts = ['contemporary', 'eleven', 'eleven-no-indicators', 'familiar', 'fedora',
                    'default', 'linuxmint', 'mageia', 'manjaro', 'mutiny', 'mutiny-no-indicators',
                    'netbook', 'netbook-no-indicators', 'opensuse', 'pantheon', 'redmond',
@@ -861,16 +850,10 @@ class MateLayouts:
             panels.prepend([Gtk.IconTheme.get_default().load_icon("image-missing", 64, 0), list_entry['displayname'], list_entry['codename']])
 
     def add_to_panel_list(self, panel_list_store, item_display_name, item_code_name, item_thumbnail):
-        layout_list = [] # list of already added layouts
-        for i in range(len(panel_list_store)):
-           layout_list.append(panel_list_store[i][2])
+       panel_list_store.append([item_thumbnail, _(item_display_name), item_code_name])
 
-        # avoid duplicate entries
-        if item_code_name not in layout_list:
-           panel_list_store.append([item_thumbnail, _(item_display_name), item_code_name])
-
-        if not item_code_name in self.system_installed_panel_layouts:
-            self.system_installed_panel_layouts.append(item_code_name)
+       if not item_code_name in self.system_installed_panel_layouts:
+          self.system_installed_panel_layouts.append(item_code_name)
 
     def get_custom_panel_list_entry(self, layout_full_name):
         layout_code_name = layout_full_name.replace('.layout','').replace('/usr/share/mate-panel/layouts/', '')
@@ -918,10 +901,7 @@ class MateLayouts:
             default_layout = GLib.Variant.get_string(settings.get_default_value('default-layout'))
             old_layout = self.current_layout
 
-            title = _('Delete this custom layout?')
-            text = _('<b>Deleting this custom layout will also return your layout to the system default.</b>\n\nAre you sure you want to permanently delete this custom layout?')
-
-            if self.confirm_dialog(title, text):
+            if self.confirm_dialog():
                 mate_layouts_helper = os.path.join('/','usr', 'lib', 'mate-layouts', 'mate-layouts-helper')
                 delete = subprocess.call(['pkexec', mate_layouts_helper, 'delete', old_layout], stdout=DEVNULL, stderr=DEVNULL)
                 Notify.init(_('MATE Layouts'))
@@ -957,8 +937,9 @@ class MateLayouts:
 
     def on_layout_view_item_activated(self, layout_view, path):
         treeiter = Gtk.TreeModel.get_iter(self.builder.get_object("layout_list"), path)
-        value = Gtk.ListStore.get_value(self.builder.get_object("layout_list"), treeiter, 2)
-        self.replace_panel_layout(value)
+        layout_code_name = Gtk.ListStore.get_value(self.builder.get_object("layout_list"), treeiter, 2)
+        self.update_panel_layout_ui(layout_code_name)
+        self.replace_panel_layout(layout_code_name)
         
 
     ''' Create the UI '''

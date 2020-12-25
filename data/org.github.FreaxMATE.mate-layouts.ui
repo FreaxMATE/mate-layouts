@@ -27,11 +27,11 @@
     <property name="can-focus">False</property>
     <property name="icon-name">object-select</property>
   </object>
-  <object class="GtkDialog" id="layout_name_dialog">
+  <object class="GtkDialog" id="confirm_dialog">
     <property name="can-focus">False</property>
     <property name="border-width">6</property>
-    <property name="title" translatable="yes">Panel layout name</property>
-    <property name="type-hint">dialog</property>
+    <property name="title" translatable="yes">Delete this custom layout?</property>
+    <property name="type-hint">normal</property>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
@@ -40,10 +40,9 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="margin-top">12</property>
             <property name="layout-style">end</property>
             <child>
-              <object class="GtkButton" id="layout_name_dialog_cancel_button">
+              <object class="GtkButton" id="confirm_dialog_cancel_button">
                 <property name="label" translatable="yes">Cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -57,7 +56,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="layout_name_dialog_close_button">
+              <object class="GtkButton" id="confirm_dialog_ok_button">
                 <property name="label" translatable="yes">OK</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -78,11 +77,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="layout_name_dialog_label">
+          <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="margin-bottom">12</property>
-            <property name="label" translatable="yes">Enter the name for your panel layout.</property>
+            <property name="label" translatable="yes">&lt;b&gt;Deleting this custom layout will also return your layout to the system default.&lt;/b&gt;</property>
+            <property name="use-markup">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -91,9 +91,11 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="layout_name_dialog_entry">
+          <object class="GtkLabel">
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-bottom">12</property>
+            <property name="label" translatable="yes">Are you sure you want to permanently delete this custom layout?</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -104,8 +106,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-6">layout_name_dialog_cancel_button</action-widget>
-      <action-widget response="-5">layout_name_dialog_close_button</action-widget>
+      <action-widget response="-6">confirm_dialog_cancel_button</action-widget>
+      <action-widget response="-5">confirm_dialog_ok_button</action-widget>
     </action-widgets>
   </object>
   <object class="GtkImage" id="img_save_as">
@@ -284,6 +286,85 @@
     <action-widgets>
       <action-widget response="-11">helpbutton</action-widget>
       <action-widget response="-7">closebutton</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkDialog" id="layout_name_dialog">
+    <property name="can-focus">False</property>
+    <property name="border-width">6</property>
+    <property name="title" translatable="yes">Panel layout name</property>
+    <property name="type-hint">normal</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-top">12</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="layout_name_dialog_cancel_button">
+                <property name="label" translatable="yes">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="layout_name_dialog_close_button">
+                <property name="label" translatable="yes">OK</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="layout_name_dialog_label">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-bottom">12</property>
+            <property name="label" translatable="yes">Enter the name for your panel layout.</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="layout_name_dialog_entry">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-6">layout_name_dialog_cancel_button</action-widget>
+      <action-widget response="-5">layout_name_dialog_close_button</action-widget>
     </action-widgets>
   </object>
 </interface>
