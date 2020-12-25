@@ -209,6 +209,7 @@
                         <property name="row-spacing">16</property>
                         <property name="column-spacing">28</property>
                         <property name="item-padding">0</property>
+                        <property name="activate-on-single-click">True</property>
                       </object>
                     </child>
                   </object>

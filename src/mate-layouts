@@ -858,7 +858,7 @@ class MateLayouts:
         layouts = os.path.join('/','usr','share','mate-panel','layouts','*-tweak.layout')
         for layout in glob.glob(layouts):
             list_entry = self.get_custom_panel_list_entry(layout)
-            panels.prepend([list_entry['displayname'], list_entry['codename']])
+            panels.prepend([Gtk.IconTheme.get_default().load_icon("image-missing", 64, 0), list_entry['displayname'], list_entry['codename']])
 
     def add_to_panel_list(self, panel_list_store, item_display_name, item_code_name, item_thumbnail):
         layout_list = [] # list of already added layouts
