@@ -741,15 +741,16 @@ class MateLayouts:
 
         layout_thumbnails = []
 
-        for i in layouts:
-           if os.path.exists('/usr/share/mate-layouts/layout-previews/' + i + '.png'):
-              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/share/mate-layouts/layout-previews/' + i + '.png', 280, 210))
-           elif os.path.exists('/usr/local/share/mate-layouts/layout-previews/' + i + '.png'):
-              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/local/share/mate-layouts/layout-previews/' + i + '.png', 280, 210))
-           elif os.path.exists('../data/layout-previews/' + i + '.png'):
-              layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('../data/layout-previews/' + i + '.png', 280, 210))
-           else:
-              layout_thumbnails.append(Gtk.IconTheme.get_default().load_icon("image-missing", 64, 0))
+        for layout in layouts:
+           if layout not in layout_thumbnails:
+              if os.path.exists('/usr/share/mate-layouts/layout-previews/' + layout + '.png'):
+                 layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/share/mate-layouts/layout-previews/' + layout + '.png', 280, 210))
+              elif os.path.exists('/usr/local/share/mate-layouts/layout-previews/' + layout + '.png'):
+                 layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/local/share/mate-layouts/layout-previews/' + layout + '.png', 280, 210))
+              elif os.path.exists('../data/layout-previews/' + layout + '.png'):
+                 layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('../data/layout-previews/' + layout + '.png', 280, 210))
+              else:
+                 layout_thumbnails.append(Gtk.IconTheme.get_default().load_icon("image-missing", 64, 0))
 
         if self.panel_layout_exists('contemporary') and \
            self.appmenu_applet_available and \
@@ -822,6 +823,7 @@ class MateLayouts:
             self.add_to_panel_list(panels, "Netbook", "netbook-no-indicators", layout_thumbnails[12])
 
         if self.panel_layout_exists('opensuse') and \
+           self.mate_menu_available and \
            not self.indicators_available:
             self.add_to_panel_list(panels, "openSUSE", "opensuse", layout_thumbnails[13])
 
@@ -859,7 +861,13 @@ class MateLayouts:
             panels.prepend([list_entry['displayname'], list_entry['codename']])
 
     def add_to_panel_list(self, panel_list_store, item_display_name, item_code_name, item_thumbnail):
-        panel_list_store.append([item_thumbnail, _(item_display_name), item_code_name])
+        layout_list = [] # list of already added layouts
+        for i in range(len(panel_list_store)):
+           layout_list.append(panel_list_store[i][2])
+
+        # avoid duplicate entries
+        if item_code_name not in layout_list:
+           panel_list_store.append([item_thumbnail, _(item_display_name), item_code_name])
 
         if not item_code_name in self.system_installed_panel_layouts:
             self.system_installed_panel_layouts.append(item_code_name)
