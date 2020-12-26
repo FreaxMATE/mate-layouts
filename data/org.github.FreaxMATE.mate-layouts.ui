@@ -120,6 +120,7 @@
     <property name="title" translatable="yes">MATE Layouts</property>
     <property name="default-width">1080</property>
     <property name="default-height">650</property>
+    <property name="icon-name">org.github.FreaxMATE.mate-layouts</property>
     <property name="type-hint">normal</property>
     <property name="startup-id">org.github.FreaxMATE.MateLayouts</property>
     <child internal-child="vbox">

@@ -43,7 +43,9 @@ PROGRAM_VERSION = __VERSION__
 data_files = [
     ('{prefix}/share/applications'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.desktop',]),
     ('{prefix}/lib/mate-layouts'.format(prefix=sys.prefix), ['src/mate-layouts-helper']),
-    ('{prefix}/share/mate-layouts/'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.ui']),
+    ('{prefix}/share/mate-layouts'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.ui']),
+    ('{prefix}/share/icons/hicolor/scalable/apps'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.svg']),
+    ('{prefix}/share/icons/hicolor/64x64/apps'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.png']),
     ('{prefix}/share/polkit-1/actions'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.policy',]),
 
     # layout previews
@@ -53,7 +55,7 @@ data_files = [
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/manjaro.png']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/opensuse.png']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/redmond-no-indicators.png']),
-
+    # with the logo on them
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/default-logo.png']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/fedora-logo.png']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/manjaro-logo.png']),
