@@ -143,15 +143,21 @@ __MENU_CONTEMPORARY_BUTTONS__ = "close,minimize,maximize:menu"
 # i18n
 gettext.install('mate-layouts', os.path.join('/','usr','share','locale'))
 
-class LayoutItem(Gtk.VBox):
-    def __init__(self, image, display_name, code_name):
+class LayoutItem(Gtk.Box):
+    def __init__(self, mate_layouts_object,  image, display_name, code_name):
         super().__init__(homogeneous=False, spacing=0)
         self.image = image
         self.display_name = Gtk.Label(label="<b>"+display_name+"</b>")
         self.display_name.set_use_markup(True)
         self.code_name = code_name
-        self.pack_start(self.image, True, True, 0)
-        self.pack_start(self.display_name, True, True, 0)
+        self.event_box = Gtk.EventBox()
+        self.box = Gtk.VBox(homogeneous=False, spacing=0)
+        self.box.pack_start(self.image, True, True, 0)
+        self.box.pack_start(self.display_name, True, True, 0)
+        self.event_box.add(self.box)
+        self.event_box.connect("enter-notify-event", MateLayouts.mouse_enter_layout_item, mate_layouts_object)
+        self.event_box.connect("leave-notify-event", MateLayouts.mouse_leave_layout_item, mate_layouts_object)
+        self.pack_start(self.event_box, True, True, 0)
         self.show_all()
 
 class MateLayouts:
@@ -858,12 +864,12 @@ class MateLayouts:
                image.set_from_file(self.get_right_path('mate-layouts/layout-previews/custom.png'))
             else:
                image.set_from_icon_name('image-missing', 128)
-            self.layout_list.insert(0, LayoutItem(image, list_entry['displayname'], list_entry['codename']))
+            self.layout_list.insert(0, LayoutItem(self, image, list_entry['displayname'], list_entry['codename']))
 
         self.update_layout_view()
 
     def add_to_panel_list(self, panel_list_store, item_display_name, item_code_name, item_thumbnail):
-       self.layout_list.append(LayoutItem(item_thumbnail, _(item_display_name), item_code_name))
+       self.layout_list.append(LayoutItem(self, item_thumbnail, _(item_display_name), item_code_name))
        if not item_code_name in self.system_installed_panel_layouts:
           self.system_installed_panel_layouts.append(item_code_name)
 
@@ -950,7 +956,15 @@ class MateLayouts:
     def on_layout_view_item_activated(self, layout_view, layout_item):
         self.update_panel_layout_ui(layout_item.get_child().code_name)
         self.replace_panel_layout(layout_item.get_child().code_name)
-        
+
+    def mouse_enter_layout_item(layout_item, event, mate_layouts_object):
+        if mate_layouts_object.get_right_path('mate-layouts/layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.png') != '':
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('mate-layouts/layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.png'))
+
+    def mouse_leave_layout_item(layout_item, event, mate_layouts_object):
+        if mate_layouts_object.get_right_path('mate-layouts/layout-previews/' + layout_item.get_parent().code_name + '.png') != '':
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('mate-layouts/layout-previews/' + layout_item.get_parent().code_name + '.png'))
+
     def get_right_path(self, suffix):
         if os.path.exists('./data/' + suffix):
            return './data/' + suffix
@@ -969,7 +983,7 @@ class MateLayouts:
         elif os.path.exists('/bin/' + suffix):
            return '/bin/' + suffix
         else:
-           return False
+           return ''
 
     ''' Create the UI '''
     def __init__(self):
