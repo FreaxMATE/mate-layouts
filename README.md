@@ -2,6 +2,8 @@
 
 ![MATE Layouts](https://github.com/FreaxMATE/mate-layouts/blob/main/data/screenhot.png "MATE Layouts")
 
+Mate Layouts is a small panel layout switching application for the MATE Desktop.
+
 ## Installation
 
 ### Depencies
@@ -12,7 +14,7 @@ sudo apt install python3-pip python3-distutils python3-distutils-extra python3-p
 ```
 
 
-### Install from source
+### Build and Install from source
 
 ```bash
 git clone https://github.com/FreaxMATE/mate-layouts.git
