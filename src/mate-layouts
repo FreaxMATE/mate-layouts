@@ -741,8 +741,8 @@ class MateLayouts:
         for layout in layouts:
            if layout not in layout_thumbnails:
               image = Gtk.Image()
-              if self.get_right_path('/mate-layouts/layout-previews/' + layout + '.png'):
-                 image.set_from_file(self.get_right_path('/mate-layouts/layout-previews/' + layout + '.png'))
+              if self.get_right_path('mate-layouts/layout-previews/' + layout + '.png'):
+                 image.set_from_file(self.get_right_path('mate-layouts/layout-previews/' + layout + '.png'))
               else:
                  image.set_from_icon_name('image-missing', 128)
               layout_thumbnails.append(image)
