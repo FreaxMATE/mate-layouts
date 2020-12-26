@@ -209,9 +209,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="260.46642"
-     inkscape:cy="66.703974"
+     inkscape:zoom="8"
+     inkscape:cx="127.71463"
+     inkscape:cy="34.3729"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -219,9 +219,9 @@
      inkscape:snap-bbox="false"
      inkscape:snap-page="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1006"
+     inkscape:window-height="1032"
      inkscape:window-x="1366"
-     inkscape:window-y="26"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      units="px" />
   <metadata
@@ -232,7 +232,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -884,7 +884,7 @@
          id="tspan954-5-2-7"
          x="18.894316"
          y="8.2185726"
-         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:1.55565px;font-family:'Fira Code';-inkscape-font-specification:'Fira Code, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#3d3846;stroke:#3d3846;stroke-width:0.0504256">0ad</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:1.55565px;font-family:'Fira Code';-inkscape-font-specification:'Fira Code, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#3d3846;stroke:#3d3846;stroke-width:0.0504256">0 A.D.</tspan></text>
     <rect
        style="fill:url(#linearGradient1399);fill-opacity:1;stroke:none;stroke-width:0.0300078;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1383"
