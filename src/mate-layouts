@@ -741,12 +741,8 @@ class MateLayouts:
         for layout in layouts:
            if layout not in layout_thumbnails:
               image = Gtk.Image()
-              if os.path.exists('/usr/share/mate-layouts/layout-previews/' + layout + '.png'):
-                 image.set_from_file('/usr/share/mate-layouts/layout-previews/' + layout + '.png')
-              elif os.path.exists('/usr/local/share/mate-layouts/layout-previews/' + layout + '.png'):
-                 image.set_from_file('/usr/local/share/mate-layouts/layout-previews/' + layout + '.png')
-              elif os.path.exists('../data/layout-previews/' + layout + '.png'):
-                 image.set_from_file('../data/layout-previews/' + layout + '.png')
+              if self.get_right_path('/mate-layouts/layout-previews/' + layout + '.png'):
+                 image.set_from_file(self.get_right_path('/mate-layouts/layout-previews/' + layout + '.png'))
               else:
                  image.set_from_icon_name('image-missing', 128)
               layout_thumbnails.append(image)
@@ -858,12 +854,8 @@ class MateLayouts:
         for layout in glob.glob(layouts):
             list_entry = self.get_custom_panel_list_entry(layout)
             image = Gtk.Image()
-            if os.path.exists('/usr/share/mate-layouts/layout-previews/custom.png'):
-               image.set_from_file('/usr/share/mate-layouts/layout-previews/custom.png')
-            elif os.path.exists('/usr/local/share/mate-layouts/layout-previews/custom.png'):
-               image.set_from_file('/usr/local/share/mate-layouts/layout-previews/custom.png')
-            elif os.path.exists('../data/layout-previews/custom.png'):
-               image.set_from_file('../data/layout-previews/custom.png')
+            if self.get_right_path('mate-layouts/layout-previews/custom.png'):
+               image.set_from_file(self.get_right_path('mate-layouts/layout-previews/custom.png'))
             else:
                image.set_from_icon_name('image-missing', 128)
             self.layout_list.insert(0, LayoutItem(image, list_entry['displayname'], list_entry['codename']))
@@ -959,6 +951,28 @@ class MateLayouts:
         self.update_panel_layout_ui(layout_item.get_child().code_name)
         self.replace_panel_layout(layout_item.get_child().code_name)
         
+    def get_right_path(self, suffix):
+        if os.path.exists('./data/' + suffix):
+           return './data/' + suffix
+        elif os.path.exists('../data/' + suffix):
+           return '../data/' + suffix
+        elif os.path.exists('/usr/share/' + suffix):
+           return '/usr/share/' + suffix
+        elif os.path.exists('/usr/local/share/' + suffix):
+           return '/usr/local/share/' + suffix
+        elif os.path.exists('/usr/share/' + suffix):
+           return '/usr/share/' + suffix
+        elif os.path.exists('/usr/local/lib/python3.7/dist-packages/usr/share/' + suffix):
+           return '/usr/share/' + suffix
+        elif os.path.exists('/usr/lib/' + suffix):
+           return '/usr/lib/' + suffix
+        elif os.path.exists('/usr/libexec/' + suffix):
+           return '/usr/libexec/' + suffix
+        elif os.path.exists('/bin/' + suffix):
+           return '/bin/' + suffix
+
+        else:
+           return False
 
     ''' Create the UI '''
     def __init__(self):
@@ -970,11 +984,11 @@ class MateLayouts:
 
         # Load the Glade UI file
         self.builder = Gtk.Builder()
-        if os.path.exists('../data/org.github.FreaxMATE.mate-layouts.ui'):
+        if self.get_right_path('org.github.FreaxMATE.mate-layouts.ui').startswith('.'):
             print('Development mode.')
-            self.builder.add_from_file('../data/org.github.FreaxMATE.mate-layouts.ui')
-        elif os.path.exists('/usr/share/mate-layouts/org.github.FreaxMATE.mate-layouts.ui'):
-            self.builder.add_from_file('/usr/share/mate-layouts/org.github.FreaxMATE.mate-layouts.ui')
+            self.builder.add_from_file(self.get_right_path('org.github.FreaxMATE.mate-layouts.ui'))
+        elif self.get_right_path('org.github.FreaxMATE.mate-layouts.ui'):
+            self.builder.add_from_file(self.get_right_path('org.github.FreaxMATE.mate-layouts.ui'))
         else:
             print("ERROR! Unable to find glade file")
 
