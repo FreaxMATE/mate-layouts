@@ -968,7 +968,6 @@ class MateLayouts:
            return '/usr/libexec/' + suffix
         elif os.path.exists('/bin/' + suffix):
            return '/bin/' + suffix
-
         else:
            return False
 
