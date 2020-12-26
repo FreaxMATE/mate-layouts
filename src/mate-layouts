@@ -145,18 +145,18 @@ gettext.install('mate-layouts', os.path.join('/','usr','share','locale'))
 
 class LayoutItem(Gtk.VBox):
     def __init__(self, image, display_name, code_name):
-        super().__init__(spacing = 6)
+        super().__init__(homogeneous=False, spacing=0)
         self.image = image
-        self.display_name = Gtk.Label(label=display_name)
+        self.display_name = Gtk.Label(label="<b>"+display_name+"</b>")
+        self.display_name.set_use_markup(True)
         self.code_name = code_name
-
         self.pack_start(self.image, True, True, 0)
         self.pack_start(self.display_name, True, True, 0)
         self.show_all()
 
 class MateLayouts:
     system_installed_panel_layouts = []
-    layout_list = [[]]
+    layout_list = []
 
     def schema_has_key(self, schema, key):
         source = Gio.SettingsSchemaSource.get_default()
@@ -722,11 +722,14 @@ class MateLayouts:
             self.volume_status_icon_enabled = True
 
     def update_layout_view(self):
-       for layout in self.layout_list:
-          self.builder.get_object("layout_view").add(LayoutItem(layout[0], layout[1], layout[2]))
+       for layout_item in self.layout_list:
+          self.builder.get_object("layout_view").add(layout_item)
        self.builder.get_object("layout_view").show_all()
 
     def make_list_of_panel_layouts(self):
+        for layout_item in self.layout_list:
+           layout_item.get_parent().destroy()
+           Gtk.Widget.destroy(layout_item)
         self.layout_list.clear()
         layouts = ['contemporary', 'eleven', 'eleven-no-indicators', 'familiar', 'fedora',
                    'default', 'linuxmint', 'mageia', 'manjaro', 'mutiny', 'mutiny-no-indicators',
@@ -737,22 +740,16 @@ class MateLayouts:
 
         for layout in layouts:
            if layout not in layout_thumbnails:
+              image = Gtk.Image()
               if os.path.exists('/usr/share/mate-layouts/layout-previews/' + layout + '.png'):
-                 image = Gtk.Image()
                  image.set_from_file('/usr/share/mate-layouts/layout-previews/' + layout + '.png')
-                 layout_thumbnails.append(image)
               elif os.path.exists('/usr/local/share/mate-layouts/layout-previews/' + layout + '.png'):
-                 image = Gtk.Image()
                  image.set_from_file('/usr/local/share/mate-layouts/layout-previews/' + layout + '.png')
-                 layout_thumbnails.append(image)
               elif os.path.exists('../data/layout-previews/' + layout + '.png'):
-                 image = Gtk.Image()
                  image.set_from_file('../data/layout-previews/' + layout + '.png')
-                 layout_thumbnails.append(image)
               else:
-                 image = Gtk.Image()
                  image.set_from_icon_name('image-missing', 128)
-                 layout_thumbnails.append(image)
+              layout_thumbnails.append(image)
 
         if self.panel_layout_exists('contemporary') and \
            self.appmenu_applet_available and \
@@ -860,19 +857,21 @@ class MateLayouts:
         layouts = os.path.join('/','usr','share','mate-panel','layouts','*-tweak.layout')
         for layout in glob.glob(layouts):
             list_entry = self.get_custom_panel_list_entry(layout)
+            image = Gtk.Image()
             if os.path.exists('/usr/share/mate-layouts/layout-previews/custom.png'):
-               self.layout_list.prepend([GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/share/mate-layouts/layout-previews/custom.png', 320, 180), list_entry['displayname'], list_entry['codename']])
+               image.set_from_file('/usr/share/mate-layouts/layout-previews/custom.png')
             elif os.path.exists('/usr/local/share/mate-layouts/layout-previews/custom.png'):
-               self.layout_list.prepend([GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/local/share/mate-layouts/layout-previews/custom.png', 320, 180), list_entry['displayname'], list_entry['codename']])
+               image.set_from_file('/usr/local/share/mate-layouts/layout-previews/custom.png')
             elif os.path.exists('../data/layout-previews/custom.png'):
-               self.layout_list.prepend([GdkPixbuf.Pixbuf.new_from_file_at_size('../data/layout-previews/custom.png', 320, 180), list_entry['displayname'], list_entry['codename']])
+               image.set_from_file('../data/layout-previews/custom.png')
             else:
-               self.layout_list.prepend([Gtk.IconTheme.get_default().load_icon("image-missing", 64, 0), list_entry['displayname'], list_entry['codename']])
+               image.set_from_icon_name('image-missing', 128)
+            self.layout_list.insert(0, LayoutItem(image, list_entry['displayname'], list_entry['codename']))
 
         self.update_layout_view()
 
     def add_to_panel_list(self, panel_list_store, item_display_name, item_code_name, item_thumbnail):
-       self.layout_list.append([item_thumbnail, _(item_display_name), item_code_name])
+       self.layout_list.append(LayoutItem(item_thumbnail, _(item_display_name), item_code_name))
        if not item_code_name in self.system_installed_panel_layouts:
           self.system_installed_panel_layouts.append(item_code_name)
 
