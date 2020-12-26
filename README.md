@@ -2,6 +2,14 @@
 
 ## Installation
 
+### Depencies
+
+#### Debian / Ubuntu:
+```bash 
+sudo apt install python3-pip python3-distutils python3-distutils-extra python3-psutil python3-setproctitle libnotify-dev
+```
+
+
 ### Install from source
 
 ```bash
