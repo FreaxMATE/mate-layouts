@@ -778,7 +778,7 @@ class MateLayouts:
 
         if self.panel_layout_exists('default') and \
            not self.indicators_available:
-            self.add_to_panel_list(self.layout_list, "GNOME2", "default", layout_thumbnails[5])
+            self.add_to_panel_list(self.layout_list, "GNOME 2", "default", layout_thumbnails[5])
 
         if self.panel_layout_exists('linuxmint') and \
            self.mint_menu_available:
