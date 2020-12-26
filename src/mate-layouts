@@ -58,16 +58,6 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 __VERSION__ = '0.0.1'
 
-__TILDA__ = """[Desktop Entry]
-Name=Tilda
-Exec=tilda
-Icon=utilities-terminal
-Terminal=false
-Type=Application
-Categories=GNOME;GTK;System;Utility;TerminalEmulator;
-X-GNOME-Autostart-enabled=true
-X-MATE-Autostart-enabled=true"""
-
 __APPLET_SOUND_LIBEXEC__ = """[Desktop Entry]
 Name=Volume Control
 Comment=Show desktop volume control
@@ -153,8 +143,20 @@ __MENU_CONTEMPORARY_BUTTONS__ = "close,minimize,maximize:menu"
 # i18n
 gettext.install('mate-layouts', os.path.join('/','usr','share','locale'))
 
+class LayoutItem(Gtk.VBox):
+    def __init__(self, image, display_name, code_name):
+        super().__init__(spacing = 6)
+        self.image = image
+        self.display_name = Gtk.Label(label=display_name)
+        self.code_name = code_name
+
+        self.pack_start(self.image, True, True, 0)
+        self.pack_start(self.display_name, True, True, 0)
+        self.show_all()
+
 class MateLayouts:
     system_installed_panel_layouts = []
+    layout_list = [[]]
 
     def schema_has_key(self, schema, key):
         source = Gio.SettingsSchemaSource.get_default()
@@ -719,10 +721,13 @@ class MateLayouts:
            os.path.exists(os.path.join(config_dir, 'autostart/') + 'mate-volume-control-status-icon.desktop'):
             self.volume_status_icon_enabled = True
 
+    def update_layout_view(self):
+       for layout in self.layout_list:
+          self.builder.get_object("layout_view").add(LayoutItem(layout[0], layout[1], layout[2]))
+       self.builder.get_object("layout_view").show_all()
+
     def make_list_of_panel_layouts(self):
-        # Panel layouts
-        panels = self.builder.get_object("layout_list")
-        panels.clear()
+        self.layout_list.clear()
         layouts = ['contemporary', 'eleven', 'eleven-no-indicators', 'familiar', 'fedora',
                    'default', 'linuxmint', 'mageia', 'manjaro', 'mutiny', 'mutiny-no-indicators',
                    'netbook', 'netbook-no-indicators', 'opensuse', 'pantheon', 'redmond',
@@ -733,19 +738,27 @@ class MateLayouts:
         for layout in layouts:
            if layout not in layout_thumbnails:
               if os.path.exists('/usr/share/mate-layouts/layout-previews/' + layout + '.png'):
-                 layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/share/mate-layouts/layout-previews/' + layout + '.png', 320, 180))
+                 image = Gtk.Image()
+                 image.set_from_file('/usr/share/mate-layouts/layout-previews/' + layout + '.png')
+                 layout_thumbnails.append(image)
               elif os.path.exists('/usr/local/share/mate-layouts/layout-previews/' + layout + '.png'):
-                 layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/local/share/mate-layouts/layout-previews/' + layout + '.png', 320, 180))
+                 image = Gtk.Image()
+                 image.set_from_file('/usr/local/share/mate-layouts/layout-previews/' + layout + '.png')
+                 layout_thumbnails.append(image)
               elif os.path.exists('../data/layout-previews/' + layout + '.png'):
-                 layout_thumbnails.append(GdkPixbuf.Pixbuf.new_from_file_at_size('../data/layout-previews/' + layout + '.png', 320, 180))
+                 image = Gtk.Image()
+                 image.set_from_file('../data/layout-previews/' + layout + '.png')
+                 layout_thumbnails.append(image)
               else:
-                 layout_thumbnails.append(Gtk.IconTheme.get_default().load_icon("image-missing", 64, 0))
+                 image = Gtk.Image()
+                 image.set_from_icon_name('image-missing', 128)
+                 layout_thumbnails.append(image)
 
         if self.panel_layout_exists('contemporary') and \
            self.appmenu_applet_available and \
            self.brisk_menu_available and \
            self.indicators_available:
-            self.add_to_panel_list(panels, "Contemporary", "contemporary", layout_thumbnails[0])
+            self.add_to_panel_list(self.layout_list, "Contemporary", "contemporary", layout_thumbnails[0])
 
         # Prefer Indicator enabled Cupertino layout and fallback to non-Indicator version.
         if self.dock is not None and \
@@ -753,38 +766,38 @@ class MateLayouts:
            self.brisk_menu_available and \
            self.indicators_available:
             if self.panel_layout_exists('eleven'):
-                self.add_to_panel_list(panels, "Cupertino", "eleven", layout_thumbnails[1])
+                self.add_to_panel_list(self.layout_list, "Cupertino", "eleven", layout_thumbnails[1])
         elif self.dock is not None and \
            self.appmenu_applet_available and \
            self.brisk_menu_available and \
            not self.indicators_available:
             if self.panel_layout_exists('eleven-no-indicators'):
-                self.add_to_panel_list(panels, "Cupertino", "eleven-no-indicators", layout_thumbnails[2])
+                self.add_to_panel_list(self.layout_list, "Cupertino", "eleven-no-indicators", layout_thumbnails[2])
 
         if self.panel_layout_exists('familiar') and \
            self.brisk_menu_available and \
            self.indicators_available:
-            self.add_to_panel_list(panels, "Familiar", "familiar", layout_thumbnails[3])
+            self.add_to_panel_list(self.layout_list, "Familiar", "familiar", layout_thumbnails[3])
 
         if distro.id() != 'ubuntu' and \
             self.panel_layout_exists('fedora'):
-            self.add_to_panel_list(panels, "Fedora", "fedora", layout_thumbnails[4])
+            self.add_to_panel_list(self.layout_list, "Fedora", "fedora", layout_thumbnails[4])
 
         if self.panel_layout_exists('default') and \
            not self.indicators_available:
-            self.add_to_panel_list(panels, "GNOME2", "default", layout_thumbnails[5])
+            self.add_to_panel_list(self.layout_list, "GNOME2", "default", layout_thumbnails[5])
 
         if self.panel_layout_exists('linuxmint') and \
            self.mint_menu_available:
-            self.add_to_panel_list(panels, "Linux Mint", "linuxmint", layout_thumbnails[6])
+            self.add_to_panel_list(self.layout_list, "Linux Mint", "linuxmint", layout_thumbnails[6])
 
         if self.panel_layout_exists('mageia') and \
            self.mageia_cc_available:
-            self.add_to_panel_list(panels, "Mageia", "mageia", layout_thumbnails[7])
+            self.add_to_panel_list(self.layout_list, "Mageia", "mageia", layout_thumbnails[7])
 
         if self.panel_layout_exists('manjaro') and \
            self.brisk_menu_available:
-            self.add_to_panel_list(panels, "Manjaro", "manjaro", layout_thumbnails[8])
+            self.add_to_panel_list(self.layout_list, "Manjaro", "manjaro", layout_thumbnails[8])
 
         # Prefer Indicator enabled Mutiny layout and fallback to non-Indicator version.
         if self.panel_layout_exists('mutiny') and \
@@ -792,12 +805,12 @@ class MateLayouts:
            self.appmenu_applet_available and \
            self.indicators_available and \
            self.brisk_menu_available:
-            self.add_to_panel_list(panels, "Mutiny", "mutiny", layout_thumbnails[9])
+            self.add_to_panel_list(self.layout_list, "Mutiny", "mutiny", layout_thumbnails[9])
         elif self.panel_layout_exists('mutiny-no-indicators') and \
            self.mate_dock_available and \
            self.appmenu_applet_available and \
            not self.indicators_available:
-            self.add_to_panel_list(panels, "Mutiny", "mutiny-no-indicators", layout_thumbnails[10])
+            self.add_to_panel_list(self.layout_list, "Mutiny", "mutiny-no-indicators", layout_thumbnails[10])
 
         # Prefer Indicator enabled Netbook layout and fallback to non-Indicator version.
         if self.panel_layout_exists('netbook') and \
@@ -805,40 +818,40 @@ class MateLayouts:
            self.indicators_available and \
            self.brisk_menu_available and \
            self.mate_dock_available:
-            self.add_to_panel_list(panels, "Netbook", "netbook", layout_thumbnails[11])
+            self.add_to_panel_list(self.layout_list, "Netbook", "netbook", layout_thumbnails[11])
         elif self.panel_layout_exists('netbook-no-indicators') and \
            self.maximus_available and \
            not self.indicators_available:
-            self.add_to_panel_list(panels, "Netbook", "netbook-no-indicators", layout_thumbnails[12])
+            self.add_to_panel_list(self.layout_list, "Netbook", "netbook-no-indicators", layout_thumbnails[12])
 
         if self.panel_layout_exists('opensuse') and \
            self.mate_menu_available and \
            not self.indicators_available:
-            self.add_to_panel_list(panels, "openSUSE", "opensuse", layout_thumbnails[13])
+            self.add_to_panel_list(self.layout_list, "openSUSE", "opensuse", layout_thumbnails[13])
 
         if self.dock is not None and \
            self.brisk_menu_available and \
            self.indicators_available:
             if self.panel_layout_exists('pantheon'):
-                self.add_to_panel_list(panels, "Pantheon", "pantheon", layout_thumbnails[14])
+                self.add_to_panel_list(self.layout_list, "Pantheon", "pantheon", layout_thumbnails[14])
 
         # Prefer Indicator enabled Redmond layout and fallback to non-Indicator version.
         if self.panel_layout_exists('redmond') and \
            self.indicators_available and \
            self.mate_menu_available:
-            self.add_to_panel_list(panels, "Redmond", "redmond", layout_thumbnails[15])
+            self.add_to_panel_list(self.layout_list, "Redmond", "redmond", layout_thumbnails[15])
         elif self.panel_layout_exists('redmond-no-indicators') and \
            self.mate_menu_available and \
            not self.indicators_available:
-            self.add_to_panel_list(panels, "Redmond", "redmond-no-indicators", layout_thumbnails[16])
+            self.add_to_panel_list(self.layout_list, "Redmond", "redmond-no-indicators", layout_thumbnails[16])
 
         if self.panel_layout_exists('solus') and \
            self.brisk_menu_available:
-            self.add_to_panel_list(panels, "Solus", "solus", layout_thumbnails[17])
+            self.add_to_panel_list(self.layout_list, "Solus", "solus", layout_thumbnails[17])
 
         if self.panel_layout_exists('ubuntu-mate') and \
            self.indicators_available:
-            self.add_to_panel_list(panels, "Traditional", "ubuntu-mate", layout_thumbnails[18])
+            self.add_to_panel_list(self.layout_list, "Traditional", "ubuntu-mate", layout_thumbnails[18])
 
         print("System installed layouts: ")
         print(self.system_installed_panel_layouts)
@@ -848,16 +861,18 @@ class MateLayouts:
         for layout in glob.glob(layouts):
             list_entry = self.get_custom_panel_list_entry(layout)
             if os.path.exists('/usr/share/mate-layouts/layout-previews/custom.png'):
-               panels.prepend([GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/share/mate-layouts/layout-previews/custom.png', 320, 180), list_entry['displayname'], list_entry['codename']])
+               self.layout_list.prepend([GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/share/mate-layouts/layout-previews/custom.png', 320, 180), list_entry['displayname'], list_entry['codename']])
             elif os.path.exists('/usr/local/share/mate-layouts/layout-previews/custom.png'):
-               panels.prepend([GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/local/share/mate-layouts/layout-previews/custom.png', 320, 180), list_entry['displayname'], list_entry['codename']])
+               self.layout_list.prepend([GdkPixbuf.Pixbuf.new_from_file_at_size('/usr/local/share/mate-layouts/layout-previews/custom.png', 320, 180), list_entry['displayname'], list_entry['codename']])
             elif os.path.exists('../data/layout-previews/custom.png'):
-               panels.prepend([GdkPixbuf.Pixbuf.new_from_file_at_size('../data/layout-previews/custom.png', 320, 180), list_entry['displayname'], list_entry['codename']])
+               self.layout_list.prepend([GdkPixbuf.Pixbuf.new_from_file_at_size('../data/layout-previews/custom.png', 320, 180), list_entry['displayname'], list_entry['codename']])
             else:
-               panels.prepend([Gtk.IconTheme.get_default().load_icon("image-missing", 64, 0), list_entry['displayname'], list_entry['codename']])
+               self.layout_list.prepend([Gtk.IconTheme.get_default().load_icon("image-missing", 64, 0), list_entry['displayname'], list_entry['codename']])
+
+        self.update_layout_view()
 
     def add_to_panel_list(self, panel_list_store, item_display_name, item_code_name, item_thumbnail):
-       panel_list_store.append([item_thumbnail, _(item_display_name), item_code_name])
+       self.layout_list.append([item_thumbnail, _(item_display_name), item_code_name])
        if not item_code_name in self.system_installed_panel_layouts:
           self.system_installed_panel_layouts.append(item_code_name)
 
@@ -941,11 +956,9 @@ class MateLayouts:
             # Update the currently selected layout.
             self.make_list_of_panel_layouts()
 
-    def on_layout_view_item_activated(self, layout_view, path):
-        treeiter = Gtk.TreeModel.get_iter(self.builder.get_object("layout_list"), path)
-        layout_code_name = Gtk.ListStore.get_value(self.builder.get_object("layout_list"), treeiter, 2)
-        self.update_panel_layout_ui(layout_code_name)
-        self.replace_panel_layout(layout_code_name)
+    def on_layout_view_item_activated(self, layout_view, layout_item):
+        self.update_panel_layout_ui(layout_item.get_child().code_name)
+        self.replace_panel_layout(layout_item.get_child().code_name)
         
 
     ''' Create the UI '''
@@ -976,10 +989,7 @@ class MateLayouts:
         self.make_list_of_panel_layouts()
         self.init_panel_features()
 
-        # Layout view
-        self.builder.get_object("layout_view").set_pixbuf_column(0)
-        self.builder.get_object("layout_view").set_text_column(1)
-        self.builder.get_object("layout_view").connect("item-activated", self.on_layout_view_item_activated)
+        self.builder.get_object("layout_view").connect("child-activated", self.on_layout_view_item_activated)
 
         response = self.window.run()
 

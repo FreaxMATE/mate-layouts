@@ -115,16 +115,6 @@
     <property name="can-focus">False</property>
     <property name="icon-name">document-save-as</property>
   </object>
-  <object class="GtkListStore" id="layout_list">
-    <columns>
-      <!-- column-name LAYOUT_THUMBNAIL -->
-      <column type="GdkPixbuf"/>
-      <!-- column-name LAYOUT_NAME -->
-      <column type="gchararray"/>
-      <!-- column-name LAYOUT_CODE -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkDialog" id="main_window">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">MATE Layouts</property>
@@ -191,35 +181,23 @@
             <property name="border-width">12</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkBox">
+              <object class="GtkScrolledWindow">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="orientation">vertical</property>
+                <property name="can-focus">True</property>
+                <property name="shadow-type">in</property>
                 <child>
-                  <object class="GtkScrolledWindow">
+                  <object class="GtkViewport">
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="border-width">12</property>
-                    <property name="shadow-type">in</property>
+                    <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkIconView" id="layout_view">
+                      <object class="GtkFlowBox" id="layout_view">
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="margin">16</property>
-                        <property name="model">layout_list</property>
-                        <property name="item-width">0</property>
-                        <property name="row-spacing">16</property>
-                        <property name="column-spacing">28</property>
-                        <property name="item-padding">0</property>
-                        <property name="activate-on-single-click">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="homogeneous">True</property>
+                        <property name="max-children-per-line">3</property>
                       </object>
                     </child>
                   </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
                 </child>
               </object>
               <packing>
@@ -233,9 +211,6 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="layout-style">end</property>
-                <child>
-                  <placeholder/>
-                </child>
                 <child>
                   <object class="GtkButton" id="button_save_panels">
                     <property name="label" translatable="yes">Save as</property>
