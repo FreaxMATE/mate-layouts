@@ -24,9 +24,9 @@ sudo apt install python3-pip python3-distutils python3-distutils-extra python3-p
 ```bash
 git clone https://github.com/FreaxMATE/mate-layouts.git
 cd mate-layouts
-sudo pip install .
+sudo pip3 install .
 # Uninstall
-sudo pip uninstall mate-layouts
+sudo pip3 uninstall mate-layouts
 ```
 
 ## License
