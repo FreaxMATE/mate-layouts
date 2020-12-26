@@ -6,7 +6,12 @@ Mate Layouts is a small panel layout switching application for the MATE Desktop.
 
 ## Installation
 
-### Depencies
+### Dependencies
+
+#### Manjaro:
+```bash 
+sudo pacman -S python-distutils-extra 
+```
 
 #### Debian / Ubuntu:
 ```bash 
