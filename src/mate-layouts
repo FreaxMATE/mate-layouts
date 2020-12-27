@@ -747,8 +747,8 @@ class MateLayouts:
         for layout in layouts:
            if layout not in layout_thumbnails:
               image = Gtk.Image()
-              if self.get_right_path('mate-layouts/layout-previews/' + layout + '.png'):
-                 image.set_from_file(self.get_right_path('mate-layouts/layout-previews/' + layout + '.png'))
+              if self.get_right_path('layout-previews/' + layout + '.png'):
+                 image.set_from_file(self.get_right_path('layout-previews/' + layout + '.png'))
               else:
                  image.set_from_icon_name('image-missing', 128)
               layout_thumbnails.append(image)
@@ -860,8 +860,8 @@ class MateLayouts:
         for layout in glob.glob(layouts):
             list_entry = self.get_custom_panel_list_entry(layout)
             image = Gtk.Image()
-            if self.get_right_path('mate-layouts/layout-previews/custom.png'):
-               image.set_from_file(self.get_right_path('mate-layouts/layout-previews/custom.png'))
+            if self.get_right_path('layout-previews/custom.png'):
+               image.set_from_file(self.get_right_path('layout-previews/custom.png'))
             else:
                image.set_from_icon_name('image-missing', 128)
             self.layout_list.insert(0, LayoutItem(self, image, list_entry['displayname'], list_entry['codename']))
@@ -958,12 +958,12 @@ class MateLayouts:
         self.replace_panel_layout(layout_item.get_child().code_name)
 
     def mouse_enter_layout_item(layout_item, event, mate_layouts_object):
-        if mate_layouts_object.get_right_path('mate-layouts/layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.png') != '':
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('mate-layouts/layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.png'))
+        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.png') != '':
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.png'))
 
     def mouse_leave_layout_item(layout_item, event, mate_layouts_object):
-        if mate_layouts_object.get_right_path('mate-layouts/layout-previews/' + layout_item.get_parent().code_name + '.png') != '':
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('mate-layouts/layout-previews/' + layout_item.get_parent().code_name + '.png'))
+        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '.png') != '':
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '.png'))
 
     def get_right_path(self, suffix):
         if os.path.exists('./data/' + suffix):
@@ -972,6 +972,8 @@ class MateLayouts:
            return '../data/' + suffix
         elif os.path.exists('/usr/share/' + suffix):
            return '/usr/share/' + suffix
+        elif os.path.exists('/usr/share/mate-layouts/' + suffix):
+           return '/usr/share/mate-layouts/' + suffix
         elif os.path.exists('/usr/local/share/' + suffix):
            return '/usr/local/share/' + suffix
         elif os.path.exists('/usr/local/lib/python3.7/dist-packages/usr/share/' + suffix):
