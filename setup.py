@@ -45,22 +45,22 @@ data_files = [
     ('{prefix}/lib/mate-layouts'.format(prefix=sys.prefix), ['src/mate-layouts-helper']),
     ('{prefix}/share/mate-layouts'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.ui']),
     ('{prefix}/share/icons/hicolor/scalable/apps'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.svg']),
-    ('{prefix}/share/icons/hicolor/64x64/apps'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/64x64/apps'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.svg']),
     ('{prefix}/share/polkit-1/actions'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.policy',]),
 
     # layout previews
-    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/custom.png']),
-    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/default.png']),
-    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/fedora.png']),
-    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/manjaro.png']),
-    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/opensuse.png']),
-    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/redmond-no-indicators.png']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/custom.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/default.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/fedora.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/manjaro.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/opensuse.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/redmond-no-indicators.svg']),
     # with the logo on them
-    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/default-logo.png']),
-    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/fedora-logo.png']),
-    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/manjaro-logo.png']),
-    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/opensuse-logo.png']),
-    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/redmond-no-indicators-logo.png']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/default-logo.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/fedora-logo.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/manjaro-logo.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/opensuse-logo.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/redmond-no-indicators-logo.svg']),
 ]
 
 cmdclass ={

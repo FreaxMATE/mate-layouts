@@ -312,22 +312,6 @@ class MateLayouts:
         mate_layouts_helper = os.path.join('/','usr', 'lib', 'mate-layouts', 'mate-layouts-helper')
         subprocess.call(['pkexec', mate_layouts_helper, 'autostop', filename], stdout=DEVNULL, stderr=DEVNULL)
 
-    def get_num_workspaces(self):
-        # Get the number of virtual workspaces from the current window manager
-        if 'marco' in self.current_wm:
-            num_workspaces = self.get_int('org.mate.Marco.general', None, 'num-workspaces')
-        elif 'compiz' in self.current_wm:
-            try:
-                num_workspaces = int(self.get_dconf_value('/org/compiz/profiles/mate/plugins/core/hsize'))
-            except:
-                num_workspaces = 0
-        else:
-            # If we can't detect the window manager assume 0 workspaces
-            num_workspaces = 0
-
-        print('Got ' + str(num_workspaces) + ' workspaces from ' + self.current_wm)
-        return num_workspaces
-
     def check_appmenu(self):
         self.appmenu_available = False
         if self.schema_has_key('org.mate.interface', 'gtk-shell-shows-menubar') \
@@ -505,7 +489,6 @@ class MateLayouts:
 
         return False
 
-
     def update_panel_layout_ui(self, panel_layout):
         if 'tweak' in panel_layout:
             self.builder.get_object('button_delete_panel').props.sensitive = True
@@ -525,7 +508,6 @@ class MateLayouts:
             return True
 
         return False
-
 
     def replace_panel_layout(self, new_layout, called_from_api=False):
         leds_enabled = self.get_bool('org.mate.peripherals-keyboard-xkb.general', None, 'duplicate-leds')
@@ -730,7 +712,11 @@ class MateLayouts:
     def update_layout_view(self):
        for layout_item in self.layout_list:
           self.builder.get_object("layout_view").add(layout_item)
+       current_layout_item = self.get_layout_item_by_layout_code_name(self.current_layout)
+       if current_layout_item != None:
+          self.builder.get_object("layout_view").set_focus_child(current_layout_item.get_parent())
        self.builder.get_object("layout_view").show_all()
+       self.builder.get_object("layout_view").grab_focus()
 
     def make_list_of_panel_layouts(self):
         for layout_item in self.layout_list:
@@ -747,8 +733,8 @@ class MateLayouts:
         for layout in layouts:
            if layout not in layout_thumbnails:
               image = Gtk.Image()
-              if self.get_right_path('layout-previews/' + layout + '.png'):
-                 image.set_from_file(self.get_right_path('layout-previews/' + layout + '.png'))
+              if self.get_right_path('layout-previews/' + layout + '.svg'):
+                 image.set_from_file(self.get_right_path('layout-previews/' + layout + '.svg'))
               else:
                  image.set_from_icon_name('image-missing', 128)
               layout_thumbnails.append(image)
@@ -860,8 +846,8 @@ class MateLayouts:
         for layout in glob.glob(layouts):
             list_entry = self.get_custom_panel_list_entry(layout)
             image = Gtk.Image()
-            if self.get_right_path('layout-previews/custom.png'):
-               image.set_from_file(self.get_right_path('layout-previews/custom.png'))
+            if self.get_right_path('layout-previews/custom.svg'):
+               image.set_from_file(self.get_right_path('layout-previews/custom.svg'))
             else:
                image.set_from_icon_name('image-missing', 128)
             self.layout_list.insert(0, LayoutItem(self, image, list_entry['displayname'], list_entry['codename']))
@@ -958,12 +944,12 @@ class MateLayouts:
         self.replace_panel_layout(layout_item.get_child().code_name)
 
     def mouse_enter_layout_item(layout_item, event, mate_layouts_object):
-        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.png') != '':
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.png'))
+        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.svg') != '':
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.svg'))
 
     def mouse_leave_layout_item(layout_item, event, mate_layouts_object):
-        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '.png') != '':
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '.png'))
+        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '.svg') != '':
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '.svg'))
 
     def get_right_path(self, suffix):
         if os.path.exists('./data/' + suffix):
@@ -987,10 +973,16 @@ class MateLayouts:
         else:
            return ''
 
+    def get_layout_item_by_layout_code_name(self, layout_code_name):
+       for layout_item in self.layout_list:
+          if layout_item.code_name == layout_code_name:
+             return layout_item
+       return None
+
     ''' Create the UI '''
     def __init__(self):
-
         self.multiarch = sysconfig.get_config_var('MULTIARCH')
+        self.current_layout = ''
         self.check_dock_features()
         self.check_panel_features()
         self.check_appmenu()
@@ -1010,18 +1002,16 @@ class MateLayouts:
         self.builder.get_object("button_delete_panel").connect("clicked", self.delete_panel)
         self.builder.get_object("button_save_panels").set_tooltip_text(_("Save the current panel layout as your own custom version"))
         self.builder.get_object("button_delete_panel").set_tooltip_text(_("Delete the currently selected panel layout"))
+        self.builder.get_object("layout_view").connect("child-activated", self.on_layout_view_item_activated)
 
         # Panel layouts
-        self.make_list_of_panel_layouts()
         self.init_panel_features()
-
-        self.builder.get_object("layout_view").connect("child-activated", self.on_layout_view_item_activated)
+        self.make_list_of_panel_layouts()
 
         response = self.window.run()
 
         if response == Gtk.ResponseType.CLOSE:
            self.window.destroy()
-
 
 if __name__ == "__main__":
     setproctitle.setproctitle('mate-layouts')
