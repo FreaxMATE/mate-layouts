@@ -1,8 +1,13 @@
 # MATE Layouts
 
-![MATE Layouts](https://github.com/FreaxMATE/mate-layouts/blob/main/data/screenhot.png "MATE Layouts")
+<img src="https://github.com/FreaxMATE/mate-layouts/blob/main/data/org.github.FreaxMATE.mate-layouts.svg" alt="drawing" width="256"/>
+<!--- ![MATE Layouts Logo](https://github.com/FreaxMATE/mate-layouts/blob/main/data/org.github.FreaxMATE.mate-layouts.svg ==250x) -->
+
 
 Mate Layouts is a small panel layout switching application for the MATE Desktop.
+
+
+![MATE Layouts](https://github.com/FreaxMATE/mate-layouts/blob/main/data/screenhot.png "MATE Layouts")
 
 ## Installation
 
