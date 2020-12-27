@@ -61,8 +61,12 @@ data_files = [
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/manjaro-logo.png']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/opensuse-logo.png']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/redmond-no-indicators-logo.png']),
-
 ]
+
+cmdclass ={
+            "build" : DistUtilsExtra.command.build_extra.build_extra,
+            "clean": DistUtilsExtra.command.clean_i18n.clean_i18n,
+}
 
 setup(
     name = "mate-layouts",
@@ -75,4 +79,5 @@ setup(
     data_files = data_files,
     install_requires = [ 'setuptools', ],
     scripts = ['src/mate-layouts'],
+    cmdclass = cmdclass,
 )
