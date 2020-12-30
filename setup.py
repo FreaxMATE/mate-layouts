@@ -40,6 +40,12 @@ with open('src/mate-layouts') as f:
 
 PROGRAM_VERSION = __VERSION__
 
+with open('data/org.github.FreaxMATE.mate-layouts.policy', 'r') as f:
+    content = f.read()
+pathed_content = content.replace('**PATH**', '{prefix}/lib/mate-layouts/mate-layouts-helper'.format(prefix=sys.prefix))
+with open('data/org.github.FreaxMATE.mate-layouts.policy', 'w') as f:
+    f.write(pathed_content)
+
 data_files = [
     ('{prefix}/share/applications'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.desktop',]),
     ('{prefix}/lib/mate-layouts'.format(prefix=sys.prefix), ['src/mate-layouts-helper']),
