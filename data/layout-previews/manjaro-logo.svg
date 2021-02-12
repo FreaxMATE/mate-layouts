@@ -226,7 +226,7 @@
          style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:1.24452px;font-family:'Fira Code';-inkscape-font-specification:'Fira Code, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke:#fffdff;stroke-width:0.0504256;stroke-opacity:1"
          id="tspan1387">Pluma</tspan></text>
     <path
-       style="fill:#ffffff;stroke:#f0544c;stroke-width:0.11721042;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:#ffffff;stroke:#97bb72;stroke-width:0.11721042;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="M 11.411029,47.197521 H 26.133151"
        id="path1301" />
     <text
@@ -241,7 +241,7 @@
          style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:1.24453px;font-family:'Fira Code';-inkscape-font-specification:'Fira Code, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke:#fffdff;stroke-width:0.0504256;stroke-opacity:1"
          id="tspan1387-8">Calculator</tspan></text>
     <path
-       style="fill:#ffffff;stroke:#f0544c;stroke-width:0.117141px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:#ffffff;stroke:#97bb72;stroke-width:0.117141px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 26.89507,47.197521 H 41.617188"
        id="path1301-7" />
     <g
@@ -361,7 +361,7 @@
        y="29.87291"
        transform="rotate(-90)" />
     <rect
-       style="fill:#f0544c;fill-opacity:1;stroke-width:0.0427397"
+       style="fill:#97bb72;fill-opacity:1;stroke-width:0.0427397"
        id="rect32-5-8"
        width="14.347788"
        height="2.8227298"
@@ -806,11 +806,11 @@
          id="rect975" />
     </g>
     <path
-       style="fill:#ffffff;stroke:#f0544c;stroke-width:0.11721042;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:#ffffff;stroke:#97bb72;stroke-width:0.11721042;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="M 0.60951144,47.195053 H 7.4669045"
        id="path1301-5" />
     <rect
-       style="fill:#f7f7f7;fill-opacity:1;stroke:#f0544c;stroke-width:0.05291667;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#f7f7f7;fill-opacity:1;stroke:#97bb72;stroke-width:0.05291667;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1012-7-4"
        width="28.614929"
        height="2.5519876"
