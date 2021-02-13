@@ -709,13 +709,13 @@ class MateLayouts:
             self.volume_status_icon_enabled = True
 
     def update_layout_view(self):
-       for layout_item in self.layout_list:
-          self.builder.get_object("layout_view").add(layout_item)
-       current_layout_item = self.get_layout_item_by_layout_code_name(self.current_layout)
-       if current_layout_item != None:
-          self.builder.get_object("layout_view").set_focus_child(current_layout_item.get_parent())
-       self.builder.get_object("layout_view").show_all()
-       self.builder.get_object("layout_view").grab_focus()
+        for layout_item in self.layout_list:
+            self.builder.get_object("layout_view").add(layout_item)
+        current_layout_item = self.get_layout_item_by_layout_code_name(self.current_layout)
+        if current_layout_item != None:
+            self.builder.get_object("layout_view").select_child(current_layout_item.get_parent())
+        self.builder.get_object("layout_view").show_all()
+        self.builder.get_object("layout_view").grab_focus()
 
     def make_list_of_panel_layouts(self):
         for layout_item in self.layout_list:
