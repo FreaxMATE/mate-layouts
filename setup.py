@@ -51,7 +51,7 @@ data_files = [
     ('{prefix}/lib/mate-layouts'.format(prefix=sys.prefix), ['src/mate-layouts-helper']),
     ('{prefix}/share/mate-layouts'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.ui']),
     ('{prefix}/share/icons/hicolor/scalable/apps'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.svg']),
-    ('{prefix}/share/icons/hicolor/64x64/apps'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.svg']),
+    ('{prefix}/share/icons/hicolor/64x64/apps'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.png']),
     ('{prefix}/share/polkit-1/actions'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.policy',]),
 
     # layout previews
