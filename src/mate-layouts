@@ -979,7 +979,7 @@ class MateLayouts:
        return None
 
     ''' Create the UI '''
-    def __init__(self):
+    def __init__(self, called_from_api=False):
         self.multiarch = sysconfig.get_config_var('MULTIARCH')
         self.current_layout = ''
         self.check_dock_features()
@@ -1012,10 +1012,10 @@ class MateLayouts:
         self.init_panel_features()
         self.make_list_of_panel_layouts()
 
-        response = self.window.run()
-
-        if response == Gtk.ResponseType.CLOSE:
-           self.window.destroy()
+        if not called_from_api:
+            response = self.window.run()
+            if response == Gtk.ResponseType.CLOSE:
+                self.window.destroy()
 
 if __name__ == "__main__":
     setproctitle.setproctitle('mate-layouts')
@@ -1027,7 +1027,7 @@ if __name__ == "__main__":
 
     # If we've been given a layout then attempt to switch layouts.
     if args.layout:
-        ml = MateLayouts()
+        ml = MateLayouts(True)
         if ml.panel_layout_exists(args.layout):
             ml.replace_panel_layout(args.layout, True)
         else:
