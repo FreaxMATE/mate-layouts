@@ -9,7 +9,7 @@ This application makes it easy to quickly metamorphose your desktop to your favo
 You are nostalgic and prefer a traditional experience? Check out the timeless, productive Gnome 2 desktop! \
 Want to use the more trendy, innovative layouts? Maybe you should try the Contemporary or Cupertino layout!
 
-![MATE Layouts](https://github.com/FreaxMATE/mate-layouts/blob/main/data/screenhot.png "MATE Layouts")
+![MATE Layouts](https://github.com/FreaxMATE/mate-layouts/blob/main/data/screenshot.png "MATE Layouts")
 
 MATE Layouts is written in Python with the GTK Toolkit and based on mate-tweak.
 
