@@ -879,7 +879,7 @@ class MateLayouts:
 
         for layout_template in self.system_installed_panel_layouts:
             if self.is_panel_layout_name_special(layout_code_name, [layout_template]):
-                result = layout_template + '--'
+                result = layout_template + '-'
 
         return result
 
@@ -915,11 +915,12 @@ class MateLayouts:
 
                 source = Gio.SettingsSchemaSource.get_default()
 
-    def save_panels(self, widget):
+    def save_panel(self, widget):
         # layout name dialog
         layoutname = self.ask_for_layout_name()
         if layoutname is not None:
             layoutnameprefix = self.get_custom_layout_file_prefix(self.current_layout)
+            print(layoutnameprefix, " ", layoutname)
             layoutname = layoutnameprefix + layoutname + '-tweak'
             print('Saving ' + layoutname)
             if self.panel_layout_exists(layoutname):
@@ -930,11 +931,36 @@ class MateLayouts:
                 dock = subprocess.call([self.mate_layouts_helper, 'dock', layoutname], stdout=DEVNULL, stderr=DEVNULL)
             install = subprocess.call(['pkexec', self.mate_layouts_helper, 'install', layoutname], stdout=DEVNULL, stderr=DEVNULL)
             Notify.init(_('MATE Layouts'))
-            save_panels_notify=Notify.Notification.new (_('Panel Layout Saved'),_('Your panel layout has been saved as ') + layoutname.replace('-tweak',''), 'dialog-information')
-            save_panels_notify.show()
+            save_panel_notify = Notify.Notification.new (_('Panel Layout Saved'),_('Your panel layout has been saved as ') + layoutname.replace('-tweak',''), 'dialog-information')
+            save_panel_notify.show()
 
             # Update the currently selected layout.
             self.make_list_of_panel_layouts()
+
+    def filechooser_dialog_export(self):
+        res = self.builder.get_object("filechooser_dialog").run()
+        if res == Gtk.ResponseType.OK:
+            self.builder.get_object("filechooser_dialog").hide()
+            return self.builder.get_object("filechooser_dialog").get_filename()
+        else:
+            self.builder.get_object("filechooser_dialog").hide()
+            return ""
+
+    def export_panel(self, widget):
+        filename = self.filechooser_dialog_export()
+        if filename == "":
+            return
+        backup = subprocess.call([self.mate_layouts_helper, 'backup', self.current_layout], stdout=DEVNULL, stderr=DEVNULL)
+        if self.dock_enabled:
+            dock = subprocess.call([self.mate_layouts_helper, 'dock', self.current_layout], stdout=DEVNULL, stderr=DEVNULL)
+        install = subprocess.call(['pkexec', self.mate_layouts_helper, 'export', self.current_layout, filename], stdout=DEVNULL, stderr=DEVNULL)
+        Notify.init(_('MATE Layouts'))
+        export_panel_notify = Notify.Notification.new (_('Panel Layout Exported'),_('Your panel layout has been exported as ') + self.current_layout.replace('-tweak',''), 'dialog-information')
+        export_panel_notify.show()
+
+    def import_panel(self, widget):
+        pass
+        ## TODO ##
 
     def on_layout_view_item_activated(self, layout_view, layout_item):
         self.update_panel_layout_ui(layout_item.get_child().code_name)
@@ -1002,10 +1028,10 @@ class MateLayouts:
             print("ERROR! Unable to find glade file.")
 
         self.window = self.builder.get_object( "main_window" )
-        self.builder.get_object("button_save_panels").connect("clicked", self.save_panels)
+        self.builder.get_object("button_save_panel").connect("clicked", self.save_panel)
         self.builder.get_object("button_delete_panel").connect("clicked", self.delete_panel)
-        self.builder.get_object("button_save_panels").set_tooltip_text(_("Save the current panel layout as your own custom version"))
-        self.builder.get_object("button_delete_panel").set_tooltip_text(_("Delete the currently selected panel layout"))
+        self.builder.get_object("button_export_panel").connect("clicked", self.export_panel)
+        self.builder.get_object("button_import_panel").connect("clicked", self.import_panel)
         self.builder.get_object("layout_view").connect("child-activated", self.on_layout_view_item_activated)
 
         # Panel layouts

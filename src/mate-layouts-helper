@@ -29,6 +29,11 @@ def autostop(filename):
     if os.path.exists(desktopfile):
         os.remove(desktopfile)
 
+def export_layout(filename, export_directory):
+    if os.path.exists(os.path.join(tempfile.gettempdir(),filename)) and os.path.exists(export_directory):
+        shutil.copy2(os.path.join(tempfile.gettempdir(),filename),
+                     os.path.join(export_directory, filename))
+        os.remove(os.path.join(tempfile.gettempdir(),filename))
 
 def install_layout(filename):
     if os.path.exists(os.path.join(tempfile.gettempdir(),filename)):
@@ -190,6 +195,15 @@ if __name__ == '__main__':
             install_layout(filename + '.dock')
             install_layout(filename + '.layout')
             install_layout(filename + '.panel')
+    elif len(sys.argv) == 4:
+        action = sys.argv[1]
+        filename = sys.argv[2]
+        directory = sys.argv[3]
+        if action == 'export':
+            export_layout(filename + '.dock', directory)
+            export_layout(filename + '.layout', directory)
+            export_layout(filename + '.panel', directory)
+
     else:
         print("ERROR! No action supplied.")
         sys.exit(1)
