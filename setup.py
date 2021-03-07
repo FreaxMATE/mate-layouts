@@ -50,8 +50,19 @@ data_files = [
     ('{prefix}/share/applications'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.desktop',]),
     ('{prefix}/lib/mate-layouts'.format(prefix=sys.prefix), ['src/mate-layouts-helper']),
     ('{prefix}/share/mate-layouts'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.ui']),
-    ('{prefix}/share/icons/hicolor/scalable/apps'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.svg']),
-    ('{prefix}/share/icons/hicolor/64x64/apps'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/scalable/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/scalable/apps/org.github.FreaxMATE.mate-layouts.svg']),
+    ('{prefix}/share/icons/hicolor/16x16/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/16x16/apps/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/22x22/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/22x22/apps/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/24x24/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/24x24/apps/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/32x32/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/32x32/apps/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/36x36/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/36x36/apps/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/48x48/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/48x48/apps/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/64x64/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/64x64/apps/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/72x72/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/72x72/apps/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/96x96/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/96x96/apps/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/128x128/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/128x128/apps/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/256x256/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/256x256/apps/org.github.FreaxMATE.mate-layouts.png']),
+    ('{prefix}/share/icons/hicolor/1024x1024/apps'.format(prefix=sys.prefix), ['data/icons/hicolor/1024x1024/apps/org.github.FreaxMATE.mate-layouts.png']),
     ('{prefix}/share/polkit-1/actions'.format(prefix=sys.prefix), ['data/org.github.FreaxMATE.mate-layouts.policy',]),
 
     # layout previews
@@ -61,12 +72,21 @@ data_files = [
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/manjaro.svg']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/opensuse.svg']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/redmond-no-indicators.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/mutiny.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/mutiny-no-indicators.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/eleven.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/eleven-no-indicators.svg']),
+
     # with the logo on them
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/default-logo.svg']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/fedora-logo.svg']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/manjaro-logo.svg']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/opensuse-logo.svg']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/redmond-no-indicators-logo.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/mutiny-logo.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/mutiny-no-indicators-logo.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/eleven-logo.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/eleven-no-indicators-logo.svg']),
 ]
 
 cmdclass ={

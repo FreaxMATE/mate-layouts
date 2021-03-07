@@ -311,6 +311,49 @@ class MateLayouts:
         # Make sure any system desktop files are also removed
         subprocess.call(['pkexec', self.mate_layouts_helper, 'autostop', filename], stdout=DEVNULL, stderr=DEVNULL)
 
+
+    def check_wm_features(self):
+        screen = Gdk.Screen.get_default()
+        current_wm = GdkX11.X11Screen.get_window_manager_name(screen)
+
+        if ('Marco' in current_wm):
+            self.current_wm = 'marco'
+            composite_enabled = self.get_bool('org.mate.Marco.general', None, 'compositing-manager')
+            if self.process_running('compton'):
+                self.current_wm += '-compton'
+            elif not composite_enabled:
+                self.current_wm += '-no-composite'
+        elif ('Compiz' in current_wm):
+            self.current_wm = current_wm.lower()
+        else:
+            self.current_wm = 'Unknown'
+
+        print('Window Manager is: ' + self.current_wm)
+
+        self.compiz_capable = False
+        self.ccsm_capable = False
+        self.marco_capable = False
+        self.marco_compton_capable = False
+        self.marco_no_composite_capable = False
+
+        if self.find_on_path('compiz'):
+            if not self.software_rasterizer and self.texture_from_pixmap:
+                 self.compiz_capable = True
+
+        if self.find_on_path('ccsm'):
+            self.ccsm_capable = True
+
+        if self.find_on_path('marco-compton') and self.find_on_path('marco') and self.find_on_path('compton'):
+            if not self.software_rasterizer and self.texture_from_pixmap:
+                self.marco_compton_capable = True
+
+        if self.find_on_path('marco-no-composite') and self.find_on_path('marco'):
+            self.marco_no_composite_capable = True
+
+        if self.find_on_path('marco'):
+            self.marco_capable = True
+
+
     def check_appmenu(self):
         self.appmenu_available = False
         if self.schema_has_key('org.mate.interface', 'gtk-shell-shows-menubar') \
@@ -349,6 +392,7 @@ class MateLayouts:
                 pid = subprocess.Popen([self.current_wm, '--replace'], stdout=DEVNULL, stderr=DEVNULL).pid
 
         # Launch the dock, if it is not already enabled.
+        print("dock_enabled: ", self.dock_enabled)
         if not self.dock_enabled:
             pid = subprocess.Popen([self.dock], stdout=DEVNULL, stderr=DEVNULL).pid
             self.dock_enabled = True
@@ -597,7 +641,8 @@ class MateLayouts:
             subprocess.call(cmd, shell=True, stdout=DEVNULL, stderr=DEVNULL)
 
         # Determine if the dock should be enabled
-        if os.path.exists(os.path.join('/','usr','share','mate-panel','layouts', new_layout + '.dock')) and self.dock is not None:
+        if (os.path.exists(os.path.join('/','usr','share','mate-panel','layouts', new_layout + '.dock')) and self.dock is not None) or \
+           self.is_panel_layout_name_special(new_layout, ['eleven','mutiny','contemporary']):
             print('Found dock hint for ' + new_layout)
             self.enable_dock()
         else:
@@ -683,7 +728,8 @@ class MateLayouts:
              if os.path.exists('/usr/share/mate-panel/applets/com.solus_project.brisk.BriskMenu.mate-panel-applet'):
               self.brisk_menu_available = True
 
-        if os.path.exists('/usr/lib/' + self.multiarch + '/mate-panel/libappmenu-mate.so') and \
+        if (os.path.exists('/usr/lib/' + self.multiarch + '/mate-panel/libappmenu-mate.so') or \
+            os.path.exists('/usr/lib/mate-panel/libappmenu-mate.so')) and \
             os.path.exists('/usr/share/mate-panel/applets/org.vala-panel.appmenu.mate-panel-applet'):
             self.appmenu_applet_available = True
 
@@ -702,6 +748,17 @@ class MateLayouts:
         if os.path.exists('/etc/xdg/autostart/mate-volume-control-status-icon.desktop') or \
            os.path.exists(os.path.join(config_dir, 'autostart/') + 'mate-volume-control-status-icon.desktop'):
             self.volume_status_icon_enabled = True
+
+        #print("indicators_available: ", self.indicators_available)
+        #print("mageia_cc_available: ", self.mageia_cc_available)
+        #print("mate_dock_available: ", self.mate_dock_available)
+        #print("mate_menu_available: ", self.mate_menu_available)
+        #print("maximus_available: ", self.maximus_available)
+        #print("mint_menu_available: ", self.mint_menu_available)
+        #print("volume_applet_enabled: ", self.volume_applet_enabled)
+        #print("volume_status_icon_enabled: ", self.volume_status_icon_enabled)
+        #print("brisk_menu_available: ", self.brisk_menu_available)
+        #print("appmenu_applet_available: ", self.appmenu_applet_available)
 
     def update_layout_view(self):
         for layout_item in self.layout_list:
@@ -1005,6 +1062,7 @@ class MateLayouts:
         self.current_layout = ''
         self.check_dock_features()
         self.check_panel_features()
+        self.check_wm_features()
         self.check_appmenu()
 
         # load helper script
