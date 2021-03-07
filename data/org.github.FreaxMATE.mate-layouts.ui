@@ -27,7 +27,12 @@
     <property name="can-focus">False</property>
     <property name="icon-name">edit-delete</property>
   </object>
-  <object class="GtkImage" id="img_expor">
+  <object class="GtkImage" id="img_export">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">document-export</property>
+  </object>
+  <object class="GtkImage" id="img_export1">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="icon-name">document-export</property>
@@ -70,8 +75,9 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="can-default">True</property>
+                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
-                <property name="image">img_expor</property>
+                <property name="image">img_export1</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -95,11 +101,6 @@
       <action-widget response="-6">filechooser_cancel_button</action-widget>
       <action-widget response="-5">filechooser_export_button</action-widget>
     </action-widgets>
-  </object>
-  <object class="GtkImage" id="img_export">
-    <property name="visible">True</property>
-    <property name="can-focus">False</property>
-    <property name="icon-name">document-export</property>
   </object>
   <object class="GtkImage" id="img_help">
     <property name="visible">True</property>
@@ -125,7 +126,7 @@
       <object class="GtkBox">
         <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
+        <property name="spacing">6</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
@@ -149,6 +150,8 @@
                 <property name="label" translatable="yes">OK</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="image">img_ok</property>
               </object>
@@ -166,25 +169,63 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="margin-bottom">12</property>
-            <property name="label" translatable="yes">&lt;b&gt;Deleting this custom layout will also return your layout to the system default.&lt;/b&gt;</property>
-            <property name="use-markup">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="margin-bottom">12</property>
-            <property name="label" translatable="yes">Are you sure you want to permanently delete this custom layout?</property>
+            <property name="border-width">12</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">dialog-question</property>
+                <property name="icon_size">6</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="orientation">vertical</property>
+                <property name="homogeneous">True</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Deleting this custom layout will also return your layout to the system default.&lt;/b&gt;</property>
+                    <property name="use-markup">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">Are you sure you want to permanently delete this custom layout?</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -238,6 +279,8 @@
                 <property name="label" translatable="yes">OK</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="image">img_ok2</property>
               </object>
@@ -354,6 +397,7 @@
           <object class="GtkNotebook" id="layouts_layouts">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
+            <property name="border-width">6</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
@@ -397,6 +441,8 @@
                       <object class="GtkButtonBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="border-width">6</property>
+                        <property name="spacing">6</property>
                         <property name="layout-style">start</property>
                         <child>
                           <object class="GtkButton" id="button_import_panel">
@@ -439,6 +485,8 @@
                       <object class="GtkButtonBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="border-width">6</property>
+                        <property name="spacing">6</property>
                         <property name="layout-style">end</property>
                         <child>
                           <object class="GtkButton" id="button_save_panel">
