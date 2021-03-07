@@ -621,11 +621,6 @@ class MateLayouts:
         # Set the new layout
         subprocess.call(['mate-panel', '--reset', '--layout', new_layout], stdout=DEVNULL, stderr=DEVNULL)
 
-        # Brisk Menu remains running.
-        # So if Brisk is not in the layout being switched to, kill it.
-        if not self.panel_layout_uses('BriskMenu', new_layout) and self.process_running('brisk-menu'):
-            self.kill_process('brisk-menu')
-
         if leds_enabled:
             time.sleep(1)
             self.set_bool('org.mate.peripherals-keyboard-xkb.general', None, 'duplicate-leds', True)
