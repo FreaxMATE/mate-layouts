@@ -13,7 +13,7 @@
    viewBox="0 0 84.666663 47.625001"
    version="1.1"
    id="svg8"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
    sodipodi:docname="redmond-no-indicators.svg"
    inkscape:export-filename="/home/kunruh/src/mate-layouts/data/layout-previews/redmond-no-indicators.png"
    inkscape:export-xdpi="96"
@@ -200,7 +200,7 @@
      inkscape:snap-page="true"
      inkscape:window-width="1920"
      inkscape:window-height="1032"
-     inkscape:window-x="1366"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      units="px" />
@@ -993,6 +993,80 @@
          style="opacity:0.1;fill:#ffffff"
          d="M 3,2 C 2.446,2 2,2.446 2,3 v 0.5 c 0,-0.554 0.446,-1 1,-1 h 18 c 0.554,0 1,0.446 1,1 V 3 C 22,2.446 21.554,2 21,2 Z"
          id="path2531" />
+    </g>
+    <g
+       transform="matrix(1.7052775,0,0,1.7052775,23.57528,4.6281279)"
+       id="g1112"
+       style="opacity:0.5">
+      <rect
+         x="1"
+         y="1"
+         width="20"
+         height="20"
+         rx="1"
+         ry="1"
+         style="fill:#4f4f4f"
+         id="rect1078" />
+      <path
+         d="M 2,1 C 1.446,1 1,1.446 1,2 v 0.5 c 0,-0.554 0.446,-1 1,-1 h 18 c 0.554,0 1,0.446 1,1 V 2 C 21,1.446 20.554,1 20,1 Z"
+         style="opacity:0.1;fill:#ffffff"
+         id="path1080" />
+      <path
+         d="m 2,21.5 c -0.554,0 -1,-0.446 -1,-1 V 20 c 0,0.554 0.446,1 1,1 h 18 c 0.554,0 1,-0.446 1,-1 v 0.5 c 0,0.554 -0.446,1 -1,1 z"
+         style="opacity:0.2"
+         id="path1082" />
+      <g
+         transform="matrix(0.5,0,0,0.5,-1,-0.5)"
+         style="opacity:0.2"
+         id="g1096">
+        <g
+           id="g1088">
+          <path
+             d="m 9,8 h 12 c 0.554,0 1,0.446 1,1 v 12 c 0,0.554 -0.446,1 -1,1 H 9 C 8.446,22 8,21.554 8,21 V 9 C 8,8.446 8.446,8 9,8 Z"
+             id="path1084" />
+          <path
+             d="m 27,8 h 12 c 0.554,0 1,0.446 1,1 v 12 c 0,0.554 -0.446,1 -1,1 H 27 c -0.554,0 -1,-0.446 -1,-1 V 9 c 0,-0.554 0.446,-1 1,-1 z"
+             id="path1086" />
+        </g>
+        <g
+           transform="translate(0,18)"
+           id="g1094">
+          <path
+             d="m 9,8 h 12 c 0.554,0 1,0.446 1,1 v 12 c 0,0.554 -0.446,1 -1,1 H 9 C 8.446,22 8,21.554 8,21 V 9 C 8,8.446 8.446,8 9,8 Z"
+             id="path1090" />
+          <path
+             d="m 27,8 h 12 c 0.554,0 1,0.446 1,1 v 12 c 0,0.554 -0.446,1 -1,1 H 27 c -0.554,0 -1,-0.446 -1,-1 V 9 c 0,-0.554 0.446,-1 1,-1 z"
+             id="path1092" />
+        </g>
+      </g>
+      <g
+         transform="matrix(0.5,0,0,0.5,-1,-1)"
+         style="fill:#48aeff"
+         id="g1110">
+        <g
+           id="g1102">
+          <path
+             d="m 9,8 h 12 c 0.554,0 1,0.446 1,1 v 12 c 0,0.554 -0.446,1 -1,1 H 9 C 8.446,22 8,21.554 8,21 V 9 C 8,8.446 8.446,8 9,8 Z"
+             style="fill:#e54333"
+             id="path1098" />
+          <path
+             d="m 27,8 h 12 c 0.554,0 1,0.446 1,1 v 12 c 0,0.554 -0.446,1 -1,1 H 27 c -0.554,0 -1,-0.446 -1,-1 V 9 c 0,-0.554 0.446,-1 1,-1 z"
+             style="fill:#0a9554"
+             id="path1100" />
+        </g>
+        <g
+           transform="translate(0,18)"
+           id="g1108">
+          <path
+             d="m 9,8 h 12 c 0.554,0 1,0.446 1,1 v 12 c 0,0.554 -0.446,1 -1,1 H 9 C 8.446,22 8,21.554 8,21 V 9 C 8,8.446 8.446,8 9,8 Z"
+             style="fill:#38739d"
+             id="path1104" />
+          <path
+             d="m 27,8 h 12 c 0.554,0 1,0.446 1,1 v 12 c 0,0.554 -0.446,1 -1,1 H 27 c -0.554,0 -1,-0.446 -1,-1 V 9 c 0,-0.554 0.446,-1 1,-1 z"
+             style="fill:#ff8f1e"
+             id="path1106" />
+        </g>
+      </g>
     </g>
   </g>
 </svg>
