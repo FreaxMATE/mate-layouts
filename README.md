@@ -1,6 +1,6 @@
 # MATE Layouts
 
-<img src="https://github.com/FreaxMATE/mate-layouts/blob/main/data/org.github.FreaxMATE.mate-layouts.svg" alt="drawing" width="256"/>
+<img src="https://github.com/FreaxMATE/mate-layouts/blob/main/data/icons/hicolor/scalable/apps/org.github.FreaxMATE.mate-layouts.svg" alt="MATE Layouts Icon" width="256"/>
 <!--- ![MATE Layouts Logo](https://github.com/FreaxMATE/mate-layouts/blob/main/data/org.github.FreaxMATE.mate-layouts.svg ==250x) -->
 
 MATE Layouts is a small panel layout switching application for the MATE Desktop.
