@@ -151,7 +151,8 @@ class LayoutItem(Gtk.Box):
         self.display_name.set_use_markup(True)
         self.code_name = code_name
         self.event_box = Gtk.EventBox()
-        self.box = Gtk.VBox(homogeneous=False, spacing=0)
+        self.box = Gtk.Box(spacing=12)
+        self.box.set_orientation(Gtk.Orientation.VERTICAL)
         self.box.pack_start(self.image, True, True, 0)
         self.box.pack_start(self.display_name, True, True, 0)
         self.event_box.add(self.box)
