@@ -38,7 +38,7 @@ sudo pip3 install .
 sudo pip3 uninstall mate-layouts
 ```
 
-on Debian as for now you have to use ```sudo python setup.py install``` instead of ```pip``` (you'll have to manually uninstall the application)
+**on Debian as for now you have to use ```sudo python setup.py install``` instead of ```pip``` (you'll have to manually uninstall the application)**
 
 ## License
 
