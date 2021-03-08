@@ -76,6 +76,8 @@ data_files = [
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/mutiny-no-indicators.svg']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/eleven.svg']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/eleven-no-indicators.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/netbook.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/netbook-no-indicators.svg']),
 
     # with the logo on them
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/default-logo.svg']),
@@ -87,6 +89,8 @@ data_files = [
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/mutiny-no-indicators-logo.svg']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/eleven-logo.svg']),
     ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/eleven-no-indicators-logo.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/netbook-logo.svg']),
+    ('{prefix}/share/mate-layouts/layout-previews'.format(prefix=sys.prefix), ['data/layout-previews/netbook-no-indicators-logo.svg']),
 ]
 
 cmdclass ={
