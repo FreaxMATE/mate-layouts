@@ -179,9 +179,9 @@
      inkscape:snap-bbox="false"
      inkscape:snap-page="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1032"
+     inkscape:window-height="1006"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="26"
      inkscape:window-maximized="1"
      units="px" />
   <metadata
@@ -830,7 +830,7 @@
     <g
        id="g1014"
        transform="matrix(2.2224609,0,0,2.2224609,-42.833686,-44.716891)"
-       style="opacity:0.5">
+       style="opacity:1">
       <g
          id="g992"
          transform="matrix(0.26458333,0,0,0.26458333,29.854376,22.235956)">

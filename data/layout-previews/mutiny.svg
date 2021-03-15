@@ -154,10 +154,10 @@
      showgrid="false"
      inkscape:snap-bbox="false"
      inkscape:snap-page="true"
-     inkscape:window-width="1856"
-     inkscape:window-height="1028"
-     inkscape:window-x="64"
-     inkscape:window-y="28"
+     inkscape:window-width="1920"
+     inkscape:window-height="1006"
+     inkscape:window-x="0"
+     inkscape:window-y="26"
      inkscape:window-maximized="1"
      units="px"
      inkscape:snap-global="false" />
@@ -642,7 +642,7 @@
     <g
        id="g964"
        transform="matrix(0.72502501,0,0,0.72502501,19.132533,1.3075201)"
-       style="opacity:0.5">
+       style="opacity:1">
       <circle
          style="opacity:0.2"
          cx="32"

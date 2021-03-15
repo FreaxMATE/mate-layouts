@@ -199,9 +199,9 @@
      inkscape:snap-bbox="false"
      inkscape:snap-page="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1032"
+     inkscape:window-height="1006"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="26"
      inkscape:window-maximized="1"
      units="px" />
   <metadata
@@ -1013,7 +1013,7 @@
     <g
        id="g1108"
        transform="matrix(0.60711864,0,0,0.60711864,22.905536,4.0811439)"
-       style="opacity:0.5">
+       style="opacity:1">
       <path
          style="fill:#6eaa36"
          d="M 31.99986,4.00028 C 16.536937,4.00028 4,16.535818 4,32.000142 4,47.464464 16.536937,60 31.99986,60 47.461382,60 59.99972,47.464464 59.99972,32.000142 59.99972,16.535818 47.461382,4.00028 31.99986,4.00028 Z"
