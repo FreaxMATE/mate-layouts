@@ -1069,7 +1069,7 @@ class MateLayouts:
         self.check_appmenu()
 
         # load helper script
-        self.mate_layouts_helper = self.get_right_path('mate-layouts/mate-layouts-helper')
+        self.mate_layouts_helper = self.get_right_path('mate-layouts-helper')
         if self.mate_layouts_helper == '':
            print('ERROR! Unable to find \'mate-layouts-helper\' script.')
 
