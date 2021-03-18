@@ -1042,16 +1042,14 @@ class MateLayouts:
            return '/usr/share/mate-layouts/' + suffix
         elif os.path.exists('/usr/local/share/' + suffix):
            return '/usr/local/share/' + suffix
-        elif os.path.exists('/usr/local/lib/python3.7/dist-packages/usr/share/' + suffix):
-           return '/usr/local/lib/python3.7/dist-packages/usr/share/' + suffix
-        elif os.path.exists('/usr/local/lib/python3.7/dist-packages/usr/lib/' + suffix):
-           return '/usr/local/lib/python3.7/dist-packages/usr/lib/' + suffix
         elif os.path.exists('/usr/lib/' + suffix):
            return '/usr/lib/' + suffix
         elif os.path.exists('/usr/libexec/' + suffix):
            return '/usr/libexec/' + suffix
         elif os.path.exists('/bin/' + suffix):
            return '/bin/' + suffix
+        elif os.path.exists('@CUSTOM_LIB_DIR@' + suffix):
+           return '@CUSTOM_LIB_DIR@' + suffix
         else:
            return ''
 

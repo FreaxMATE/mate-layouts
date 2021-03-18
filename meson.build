@@ -16,6 +16,7 @@ layoutsdir = join_paths(datadir, 'mate-layouts/layout-previews/')
 
 conf_data = configuration_data()
 conf_data.set('HELPER_PATH', join_paths(prefix, libdir, 'mate-layouts/mate-layouts-helper'))
+conf_data.set('CUSTOM_LIB_DIR', join_paths(prefix, libdir, 'mate-layouts/'))
 
 # Python scripts
 configure_file(input: 'src/mate-layouts', output: 'mate-layouts', install_dir: bindir, install: true, configuration: conf_data)
