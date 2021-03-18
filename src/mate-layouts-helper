@@ -23,18 +23,34 @@ import tempfile
 from gi.repository import Gio
 from subprocess import PIPE
 
-
+#
+# remove .desktop autostart file to stop apps from starting automatically
+#
 def autostop(filename):
     desktopfile = os.path.join('/','etc','xdg','autostart', filename)
     if os.path.exists(desktopfile):
         os.remove(desktopfile)
 
+#
+# export current layout files to temporary directory
+#
 def export_layout(filename, export_directory):
     if os.path.exists(os.path.join(tempfile.gettempdir(),filename)) and os.path.exists(export_directory):
-        shutil.copy2(os.path.join(tempfile.gettempdir(),filename),
-                     os.path.join(export_directory, filename))
+        shutil.copy2(os.path.join(tempfile.gettempdir(),filename), os.path.join(export_directory, filename))
         os.remove(os.path.join(tempfile.gettempdir(),filename))
 
+#
+# import layout file to temporary directory
+#
+# filepath: absolute path of import file
+#
+def import_layout(filepath):
+    if os.path.exists(filepath):
+        shutil.copy2(filepath, os.path.join(tempfile.gettempdir(),os.path.basename(filepath)))
+
+#
+# install layout files in the temp directory to system
+#
 def install_layout(filename):
     if os.path.exists(os.path.join(tempfile.gettempdir(),filename)):
         shutil.copy2(os.path.join(tempfile.gettempdir(),filename),
@@ -46,7 +62,9 @@ def install_layout(filename):
             os.remove(os.path.join('/','usr','share','mate-panel','layouts',filename))
         print('Unable to find ' + os.path.join(tempfile.gettempdir(),filename))
 
-
+#
+# delete custom layout files from system
+#
 def delete_layout(filename):
     if 'tweak' in filename:
         layout = os.path.join('/','usr','share','mate-panel','layouts',filename)
@@ -57,7 +75,9 @@ def delete_layout(filename):
     else:
         print('WARNING! I will only delete custom layouts. Skipping ' + layout)
 
-
+#
+# create and backup current layout files to temp directory
+#
 def backup_layout(filename):
     VALID = {'toplevel': ('enable-buttons', 'expand', 'monitor', 'orientation', 'screen', 'size'),
              'launcher': ('object-type', 'launcher-location', 'menu-path', 'toplevel-id', 'position', 'panel-right-stick', 'locked'),
@@ -195,6 +215,10 @@ if __name__ == '__main__':
             install_layout(filename + '.dock')
             install_layout(filename + '.layout')
             install_layout(filename + '.panel')
+        elif action == 'import':
+            import_layout(filename + '.dock')
+            import_layout(filename + '.layout')
+            import_layout(filename + '.panel')
     elif len(sys.argv) == 4:
         action = sys.argv[1]
         filename = sys.argv[2]

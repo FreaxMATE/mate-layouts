@@ -7,6 +7,11 @@
     <property name="can-focus">False</property>
     <property name="icon-name">process-stop</property>
   </object>
+  <object class="GtkImage" id="img_cancel1">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">process-stop</property>
+  </object>
   <object class="GtkImage" id="img_cancel2">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -37,7 +42,7 @@
     <property name="can-focus">False</property>
     <property name="icon-name">document-export</property>
   </object>
-  <object class="GtkFileChooserDialog" id="filechooser_dialog">
+  <object class="GtkFileChooserDialog" id="filechooser_dialog_export">
     <property name="can-focus">False</property>
     <property name="can-default">True</property>
     <property name="title" translatable="yes">Select File</property>
@@ -109,6 +114,11 @@
     <property name="icon-name">help-browser-symbolic</property>
   </object>
   <object class="GtkImage" id="img_import">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">document-import</property>
+  </object>
+  <object class="GtkImage" id="img_import2">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="icon-name">document-import</property>
@@ -564,6 +574,79 @@
     <action-widgets>
       <action-widget response="-11">helpbutton</action-widget>
       <action-widget response="-7">closebutton</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkFileFilter" id="import_filter">
+    <patterns>
+      <pattern>*.layout</pattern>
+      <pattern>*.panel</pattern>
+      <pattern>*.dock</pattern>
+    </patterns>
+  </object>
+  <object class="GtkFileChooserDialog" id="filechooser_dialog_import">
+    <property name="can-focus">False</property>
+    <property name="can-default">True</property>
+    <property name="title" translatable="yes">Select File</property>
+    <property name="window-position">center-on-parent</property>
+    <property name="destroy-with-parent">True</property>
+    <property name="icon-name">org.github.FreaxMATE.mate-layouts</property>
+    <property name="type-hint">dialog</property>
+    <property name="filter">import_filter</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="filechooser_cancel_button1">
+                <property name="label" translatable="yes">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="image">img_cancel1</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="filechooser_export_button1">
+                <property name="label" translatable="yes">Import</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="image">img_import2</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-6">filechooser_cancel_button1</action-widget>
+      <action-widget response="-5">filechooser_export_button1</action-widget>
     </action-widgets>
   </object>
 </interface>

@@ -991,12 +991,12 @@ class MateLayouts:
             self.make_list_of_panel_layouts()
 
     def filechooser_dialog_export(self):
-        res = self.builder.get_object("filechooser_dialog").run()
+        res = self.builder.get_object("filechooser_dialog_export").run()
         if res == Gtk.ResponseType.OK:
-            self.builder.get_object("filechooser_dialog").hide()
-            return self.builder.get_object("filechooser_dialog").get_filename()
+            self.builder.get_object("filechooser_dialog_export").hide()
+            return self.builder.get_object("filechooser_dialog_export").get_filename()
         else:
-            self.builder.get_object("filechooser_dialog").hide()
+            self.builder.get_object("filechooser_dialog_export").hide()
             return ""
 
     def export_panel(self, widget):
@@ -1011,9 +1011,26 @@ class MateLayouts:
         export_panel_notify = Notify.Notification.new (_('Panel Layout Exported'),_('Your panel layout has been exported as ') + self.current_layout.replace('-tweak',''), 'dialog-information')
         export_panel_notify.show()
 
+    def filechooser_dialog_import(self):
+        res = self.builder.get_object("filechooser_dialog_import").run()
+        if res == Gtk.ResponseType.OK:
+            self.builder.get_object("filechooser_dialog_import").hide()
+            return self.builder.get_object("filechooser_dialog_import").get_filename()
+        else:
+            self.builder.get_object("filechooser_dialog_import").hide()
+            return ""
+
     def import_panel(self, widget):
-        pass
-        ## TODO ##
+        filepath = self.filechooser_dialog_import()
+        if filepath == "":
+            return
+        import_call = subprocess.call([self.mate_layouts_helper, 'import', filepath.rsplit(".")[0]], stdout=DEVNULL, stderr=DEVNULL)
+        install = subprocess.call(['pkexec', self.mate_layouts_helper, 'install', os.path.basename(filepath).rsplit(".")[0]], stdout=DEVNULL, stderr=DEVNULL)
+        Notify.init(_('MATE Layouts'))
+        export_panel_notify = Notify.Notification.new (_('Panel Layout Imported'),_('Your panel layout has been imported as ') + self.current_layout.replace('-tweak',''), 'dialog-information')
+        export_panel_notify.show()
+        # Update the currently selected layout.
+        self.make_list_of_panel_layouts()
 
     def on_layout_view_item_activated(self, layout_view, layout_item):
         self.update_panel_layout_ui(layout_item.get_child().code_name)
