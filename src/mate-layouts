@@ -1022,10 +1022,14 @@ class MateLayouts:
     def mouse_enter_layout_item(layout_item, event, mate_layouts_object):
         if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.svg') != '':
            layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.svg'))
+        elif layout_item.get_parent().code_name.endswith('tweak'):
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom-logo.svg'))
 
     def mouse_leave_layout_item(layout_item, event, mate_layouts_object):
         if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '.svg') != '':
            layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '.svg'))
+        elif layout_item.get_parent().code_name.endswith('tweak'):
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom.svg'))
 
     def get_right_path(self, suffix):
         if os.path.exists('./data/' + suffix):

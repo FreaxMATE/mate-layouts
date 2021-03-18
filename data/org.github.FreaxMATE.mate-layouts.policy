@@ -15,6 +15,6 @@
       <allow_inactive>no</allow_inactive>
       <allow_active>yes</allow_active>
     </defaults>
-    <annotate key="org.freedesktop.policykit.exec.path">**PATH**</annotate>
+    <annotate key="org.freedesktop.policykit.exec.path">@HELPER_PATH@</annotate>
   </action>
 </policyconfig>

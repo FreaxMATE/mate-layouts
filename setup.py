@@ -42,7 +42,7 @@ PROGRAM_VERSION = __VERSION__
 
 with open('data/org.github.FreaxMATE.mate-layouts.policy', 'r') as f:
     content = f.read()
-pathed_content = content.replace('**PATH**', '{prefix}/lib/mate-layouts/mate-layouts-helper'.format(prefix=sys.prefix))
+pathed_content = content.replace('@HELPER_PATH@', '{prefix}/lib/mate-layouts/mate-layouts-helper'.format(prefix=sys.prefix))
 with open('data/org.github.FreaxMATE.mate-layouts.policy', 'w') as f:
     f.write(pathed_content)
 
