@@ -30,7 +30,7 @@ sudo apt install python3-pip python3-distutils python3-distutils-extra python3-p
 
 ### Build and Install from source
 
-#### Using meson
+#### Using meson (preferred)
 ```bash
 git clone https://github.com/FreaxMATE/mate-layouts.git
 cd mate-layouts
