@@ -12,7 +12,7 @@ libdir = get_option('libdir')
 policydir = join_paths(datadir, 'polkit-1/actions')
 gladedir = join_paths(datadir, 'mate-layouts/')
 icondir = join_paths(datadir, 'icons/hicolor/')
-layoutsdir = join_paths(datadir, 'mate-layouts/layout-previews/')
+layoutsdir = join_paths(datadir, 'mate-layouts/')
 
 conf_data = configuration_data()
 conf_data.set('HELPER_PATH', join_paths(prefix, libdir, 'mate-layouts/mate-layouts-helper'))
@@ -45,32 +45,7 @@ install_data(['data/icons/hicolor/1024x1024/apps/org.github.FreaxMATE.mate-layou
 install_data(['data/icons/hicolor/scalable/apps/org.github.FreaxMATE.mate-layouts.svg',], install_dir: join_paths(icondir,'scalable/apps/'))
 
 # Layouts previews
-install_data(['data/layout-previews/custom.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/default.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/fedora.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/manjaro.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/opensuse.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/redmond-no-indicators.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/mutiny.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/mutiny-no-indicators.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/eleven.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/eleven-no-indicators.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/netbook.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/netbook-no-indicators.svg',], install_dir: layoutsdir)
-
-# with the logo on them
-install_data(['data/layout-previews/custom-logo.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/default-logo.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/fedora-logo.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/manjaro-logo.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/opensuse-logo.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/redmond-no-indicators-logo.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/mutiny-logo.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/mutiny-no-indicators-logo.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/eleven-logo.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/eleven-no-indicators-logo.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/netbook-logo.svg',], install_dir: layoutsdir)
-install_data(['data/layout-previews/netbook-no-indicators-logo.svg',], install_dir: layoutsdir)
+install_subdir('data/layout-previews/', install_dir : layoutsdir)
 
 meson.add_install_script('meson-post-install.py')
 

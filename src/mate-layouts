@@ -785,8 +785,8 @@ class MateLayouts:
         for layout in layouts:
            if layout not in layout_thumbnails:
               image = Gtk.Image()
-              if self.get_right_path('layout-previews/' + layout + '.svg'):
-                 image.set_from_file(self.get_right_path('layout-previews/' + layout + '.svg'))
+              if self.get_right_path('layout-previews/' + layout + '-symbolic.svg'):
+                 image.set_from_file(self.get_right_path('layout-previews/' + layout + '-symbolic.svg'))
               else:
                  image.set_from_icon_name('image-missing', 128)
               layout_thumbnails.append(image)
@@ -1037,14 +1037,14 @@ class MateLayouts:
         self.replace_panel_layout(layout_item.get_child().code_name)
 
     def mouse_enter_layout_item(layout_item, event, mate_layouts_object):
-        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.svg') != '':
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '.svg'))
+        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '-symbolic.svg') != '':
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '-symbolic.svg'))
         elif layout_item.get_parent().code_name.endswith('tweak'):
            layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom-logo.svg'))
 
     def mouse_leave_layout_item(layout_item, event, mate_layouts_object):
-        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '.svg') != '':
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '.svg'))
+        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-symbolic.svg') != '':
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-symbolic.svg'))
         elif layout_item.get_parent().code_name.endswith('tweak'):
            layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom.svg'))
 
