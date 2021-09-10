@@ -312,85 +312,16 @@ class MateLayouts:
         # Make sure any system desktop files are also removed
         subprocess.call(['pkexec', self.mate_layouts_helper, 'autostop', filename], stdout=DEVNULL, stderr=DEVNULL)
 
-
-    def check_wm_features(self):
-        screen = Gdk.Screen.get_default()
-        current_wm = GdkX11.X11Screen.get_window_manager_name(screen)
-
-        if ('Marco' in current_wm):
-            self.current_wm = 'marco'
-            composite_enabled = self.get_bool('org.mate.Marco.general', None, 'compositing-manager')
-            if self.process_running('compton'):
-                self.current_wm += '-compton'
-            elif not composite_enabled:
-                self.current_wm += '-no-composite'
-        elif ('Compiz' in current_wm):
-            self.current_wm = current_wm.lower()
-        else:
-            self.current_wm = 'Unknown'
-
-        print('Window Manager is: ' + self.current_wm)
-
-        self.compiz_capable = False
-        self.ccsm_capable = False
-        self.marco_capable = False
-        self.marco_compton_capable = False
-        self.marco_no_composite_capable = False
-
-        if self.find_on_path('compiz'):
-            if not self.software_rasterizer and self.texture_from_pixmap:
-                 self.compiz_capable = True
-
-        if self.find_on_path('ccsm'):
-            self.ccsm_capable = True
-
-        if self.find_on_path('marco-compton') and self.find_on_path('marco') and self.find_on_path('compton'):
-            if not self.software_rasterizer and self.texture_from_pixmap:
-                self.marco_compton_capable = True
-
-        if self.find_on_path('marco-no-composite') and self.find_on_path('marco'):
-            self.marco_no_composite_capable = True
-
-        if self.find_on_path('marco'):
-            self.marco_capable = True
-
-
     def check_appmenu(self):
         self.appmenu_available = False
         if self.schema_has_key('org.mate.interface', 'gtk-shell-shows-menubar') \
             and self.schema_has_key('org.appmenu.gtk-module','blacklist'):
             self.appmenu_available = True
 
-    def maximus_decorate(self):
-        # Only decorate if currently undecorated
-        if self.get_bool('org.mate.maximus', None, 'undecorate'):
-            print('Decorating')
-            self.set_bool('org.mate.maximus', None, 'undecorate', False)
-
-    def maximus_undecorate(self):
-        # On undecorate if currently decorated
-        if not self.get_bool('org.mate.maximus', None, 'undecorate'):
-            print('Undecorating')
-            self.set_bool('org.mate.maximus', None, 'undecorate', True)
-
     def enable_dock(self):
         self.set_string('org.mate.session.required-components', None, 'dock', self.dock)
         if self.dock:
             self.remove_autostart(self.dock + '.desktop')
-
-        # Docks require compositing
-        schema = None
-        if self.current_wm == 'marco':
-            schema = 'org.mate.Marco.general'
-        elif 'compiz' in self.current_wm:
-            # https://bugs.launchpad.net/ubuntu-mate/+bug/1437611
-            self.set_bool('org.compiz.thumbnail', '/org/compiz/profiles/mate/plugins/thumbnail/', 'current-viewport', False)
-
-        if schema is not None:
-            compositor_enabled = self.get_bool(schema, None, 'compositing-manager')
-            if not compositor_enabled:
-                self.set_bool(schema, None, 'compositing-manager', True)
-                pid = subprocess.Popen([self.current_wm, '--replace'], stdout=DEVNULL, stderr=DEVNULL).pid
 
         # Launch the dock, if it is not already enabled.
         print("dock_enabled: ", self.dock_enabled)
@@ -404,67 +335,6 @@ class MateLayouts:
             self.remove_autostart(self.dock + '.desktop')
         self.kill_process(self.dock)
         self.dock_enabled = False
-
-    def enable_volume_control_applet(self):
-        if os.path.exists('/usr/lib/mate-media/mate-volume-control-applet'):
-           pid = subprocess.Popen(['/usr/lib/mate-media/mate-volume-control-applet'], stdout=DEVNULL, stderr=DEVNULL).pid
-           self.remove_autostart('mate-volume-control-applet.desktop')
-           self.create_autostart('mate-volume-control-applet.desktop', __APPLET_SOUND_LIB__)
-        elif os.path.exists('/usr/libexec/mate-volume-control-applet'):
-           pid = subprocess.Popen(['/usr/libexec/mate-volume-control-applet'], stdout=DEVNULL, stderr=DEVNULL).pid
-           self.remove_autostart('mate-volume-control-applet.desktop')
-           self.create_autostart('mate-volume-control-applet.desktop', __APPLET_SOUND_LIBEXEC__)
-        elif os.path.exists('/usr/bin/mate-volume-control-applet'):
-           pid = subprocess.Popen(['/usr/bin/mate-volume-control-applet'], stdout=DEVNULL, stderr=DEVNULL).pid
-           self.remove_autostart('mate-volume-control-applet.desktop')
-           self.create_autostart('mate-volume-control-applet.desktop', __APPLET_SOUND_BIN__)
-
-    def disable_applets(self):
-        """
-        When indicators are enabled some MATE applets need disabling
-        or hiding.
-        """
-        self.kill_process('mate-volume-control-applet')
-        self.kill_process('mate-volume-control-status-icon')
-        self.remove_autostart('mate-volume-control-applet.desktop')
-        self.remove_autostart('mate-volume-control-status-icon.desktop')
-        if os.path.exists('/usr/libexec/ayatana-indicator-power/ayatana-indicator-power-service'):
-            self.set_string('org.mate.power-manager', None, 'icon-policy', 'never')
-            self.set_bool('org.mate.power-manager', None, 'notify-low-capacity', False)
-
-        # Remove the incorrectly named autostart file caused by an earlier bug.
-        # Note the double .desktop suffix.
-        self.remove_autostart('mate-volume-control-applet.desktop.desktop')
-        self.remove_autostart('mate-volume-control-status-icon.desktop.desktop')
-
-    def enable_applets(self, new_layout):
-        """
-        When indicators are disabled some MATE applets need enabling
-        or showing.
-        """
-        if self.panel_layout_uses('Object volume-control', new_layout):
-           self.enable_volume_control_applet()
-           self.kill_process('mate-volume-control-status-icon')
-           self.remove_autostart('mate-volume-control-status-icon.desktop')
-        elif os.path.exists('/usr/bin/mate-volume-control-status-icon'):
-           self.kill_process('mate-volume-control-applet')
-           self.remove_autostart('mate-volume-control-applet.desktop')
-           pid = subprocess.Popen(['/usr/bin/mate-volume-control-status-icon'], stdout=DEVNULL, stderr=DEVNULL).pid
-           self.remove_autostart('mate-volume-control-status-icon.desktop')
-           self.create_autostart('mate-volume-control-status-icon.desktop', __STATUS_ICON_SOUND__)
-        else:
-           self.enable_volume_control_applet()
-           self.kill_process('mate-volume-control-status-icon')
-           self.remove_autostart('mate-volume-control-status-icon.desktop')
-
-        if os.path.exists('/usr/libexec/ayatana-indicator-power/ayatana-indicator-power-service'):
-            self.set_string('org.mate.power-manager', None, 'icon-policy', 'present')
-            self.set_bool('org.mate.power-manager', None, 'notify-low-capacity', True)
-
-        # Remove the incorrectly named autostart file case by an earlier bug.
-        # Note the double .desktop suffix.
-        self.remove_autostart('mate-volume-control-applet.desktop.desktop')
-        self.remove_autostart('mate-volume-control-status-icon.desktop.desktop')
 
     def panel_layout_uses(self, applet, panel_layout):
         try:
@@ -628,13 +498,6 @@ class MateLayouts:
             print('Change item-icon-size')
             self.set_string('org.mate.panel.menubar', None, 'item-icon-size', item_icon_size)
 
-        # If the panel layout is Indicator enabled the appropriate
-        # indicators and applets need to be stopped/started
-        if self.panel_layout_uses('IndicatorApplet', new_layout):
-            self.disable_applets()
-        else:
-            self.enable_applets(new_layout)
-
         # If we have a custom panel layout just replace the dconf dump.
         if os.path.exists(os.path.join('/','usr','share','mate-panel','layouts', new_layout + '.panel')):
             print('Loading additional panel configuration for ' + new_layout)
@@ -648,21 +511,6 @@ class MateLayouts:
             self.enable_dock()
         else:
             self.disable_dock()
-
-        # Determine if maximised windows should be undecorated
-        if self.maximus_available:
-            layout_name_is_special = self.is_panel_layout_name_special(new_layout, ['mutiny','netbook'])
-            custom_settings = self.get_panel_layout_section_settings(new_layout, 'Customsetting maximusdecoration', [])
-
-            # Prefer custom settings
-            if custom_settings.get('mate-maximus-undecorate') and custom_settings.get('mate-maximus-undecorate').upper() == 'TRUE':
-                self.maximus_undecorate()
-            elif custom_settings.get('mate-maximus-recorded') and custom_settings.get('mate-maximus-undecorate').upper() == 'FALSE':
-                self.maximus_decorate()
-            elif layout_name_is_special:
-                self.maximus_undecorate()
-            else:
-                self.maximus_decorate()
 
         # Set the new layout
         subprocess.call(['mate-panel', '--reset', '--layout', new_layout], stdout=DEVNULL, stderr=DEVNULL)
@@ -699,23 +547,13 @@ class MateLayouts:
 
     def check_panel_features(self):
         # Determine what panel features are available
-        self.indicators_available = False
-        self.mageia_cc_available = False
         self.mate_dock_available = False
         self.mate_menu_available = False
-        self.maximus_available = False
         self.mint_menu_available = False
         self.volume_applet_enabled = False
         self.volume_status_icon_enabled = False
         self.brisk_menu_available = False
         self.appmenu_applet_available = False
-
-        if os.path.exists('/usr/lib/ayatana-indicators3/7/libayatana-application.so') and \
-            os.path.exists('/usr/share/mate-panel/applets/org.mate.applets.Indicator.mate-panel-applet'):
-                self.indicators_available = True
-
-        if os.path.exists('/usr/share/applications/mageia-drakconf.desktop'):
-            self.mageia_cc_available = True
 
         if os.path.exists('/usr/lib/mate-applets/mate-dock-applet/dock.py'):
             self.mate_dock_available = True
@@ -734,10 +572,6 @@ class MateLayouts:
             os.path.exists('/usr/share/mate-panel/applets/org.vala-panel.appmenu.mate-panel-applet'):
             self.appmenu_applet_available = True
 
-        if os.path.exists('/usr/bin/mate-maximus') and \
-           os.path.exists('/usr/lib/mate-netbook/mate-window-picker-applet'):
-            self.maximus_available = True
-
         if os.path.exists('/usr/lib/linuxmint/mintMenu/mintMenu.py'):
             self.mint_menu_available = True
 
@@ -750,11 +584,8 @@ class MateLayouts:
            os.path.exists(os.path.join(config_dir, 'autostart/') + 'mate-volume-control-status-icon.desktop'):
             self.volume_status_icon_enabled = True
 
-        #print("indicators_available: ", self.indicators_available)
-        #print("mageia_cc_available: ", self.mageia_cc_available)
         #print("mate_dock_available: ", self.mate_dock_available)
         #print("mate_menu_available: ", self.mate_menu_available)
-        #print("maximus_available: ", self.maximus_available)
         #print("mint_menu_available: ", self.mint_menu_available)
         #print("volume_applet_enabled: ", self.volume_applet_enabled)
         #print("volume_status_icon_enabled: ", self.volume_status_icon_enabled)
@@ -791,104 +622,43 @@ class MateLayouts:
                  image.set_from_icon_name('image-missing', 128)
               layout_thumbnails.append(image)
 
-        if self.panel_layout_exists('contemporary') and \
-           self.appmenu_applet_available and \
-           self.brisk_menu_available and \
-           self.indicators_available:
-            self.add_to_panel_list(self.layout_list, "Contemporary", "contemporary", layout_thumbnails[0])
-
-        # Prefer Indicator enabled Cupertino layout and fallback to non-Indicator version.
         if self.dock is not None and \
            self.appmenu_applet_available and \
-           self.brisk_menu_available and \
-           self.indicators_available:
-            if self.panel_layout_exists('eleven'):
-                self.add_to_panel_list(self.layout_list, "Cupertino", "eleven", layout_thumbnails[1])
-        elif self.dock is not None and \
-           self.appmenu_applet_available and \
-           self.brisk_menu_available and \
-           not self.indicators_available:
+           self.brisk_menu_available:
             if self.panel_layout_exists('eleven-no-indicators'):
                 self.add_to_panel_list(self.layout_list, "Cupertino", "eleven-no-indicators", layout_thumbnails[2])
-
-        if self.panel_layout_exists('familiar') and \
-           self.brisk_menu_available and \
-           self.indicators_available:
-            self.add_to_panel_list(self.layout_list, "Familiar", "familiar", layout_thumbnails[3])
 
         if distro.id() != 'ubuntu' and \
             self.panel_layout_exists('fedora'):
             self.add_to_panel_list(self.layout_list, "Fedora", "fedora", layout_thumbnails[4])
 
-        if self.panel_layout_exists('default') and \
-           not self.indicators_available:
+        if self.panel_layout_exists('default'):
             self.add_to_panel_list(self.layout_list, "GNOME 2", "default", layout_thumbnails[5])
 
         if self.panel_layout_exists('linuxmint') and \
            self.mint_menu_available:
             self.add_to_panel_list(self.layout_list, "Linux Mint", "linuxmint", layout_thumbnails[6])
 
-        if self.panel_layout_exists('mageia') and \
-           self.mageia_cc_available:
-            self.add_to_panel_list(self.layout_list, "Mageia", "mageia", layout_thumbnails[7])
-
         if self.panel_layout_exists('manjaro') and \
            self.brisk_menu_available:
             self.add_to_panel_list(self.layout_list, "Manjaro", "manjaro", layout_thumbnails[8])
 
-        # Prefer Indicator enabled Mutiny layout and fallback to non-Indicator version.
-        if self.panel_layout_exists('mutiny') and \
+        if self.panel_layout_exists('mutiny-no-indicators') and \
            self.mate_dock_available and \
-           self.appmenu_applet_available and \
-           self.indicators_available and \
-           self.brisk_menu_available:
-            self.add_to_panel_list(self.layout_list, "Mutiny", "mutiny", layout_thumbnails[9])
-        elif self.panel_layout_exists('mutiny-no-indicators') and \
-           self.mate_dock_available and \
-           self.appmenu_applet_available and \
-           not self.indicators_available:
+           self.appmenu_applet_available:
             self.add_to_panel_list(self.layout_list, "Mutiny", "mutiny-no-indicators", layout_thumbnails[10])
 
-        # Prefer Indicator enabled Netbook layout and fallback to non-Indicator version.
-        if self.panel_layout_exists('netbook') and \
-           self.maximus_available and \
-           self.indicators_available and \
-           self.brisk_menu_available and \
-           self.mate_dock_available:
-            self.add_to_panel_list(self.layout_list, "Netbook", "netbook", layout_thumbnails[11])
-        elif self.panel_layout_exists('netbook-no-indicators') and \
-           self.maximus_available and \
-           not self.indicators_available:
-            self.add_to_panel_list(self.layout_list, "Netbook", "netbook-no-indicators", layout_thumbnails[12])
-
         if self.panel_layout_exists('opensuse') and \
-           self.mate_menu_available and \
-           not self.indicators_available:
+           self.mate_menu_available:
             self.add_to_panel_list(self.layout_list, "openSUSE", "opensuse", layout_thumbnails[13])
 
-        if self.dock is not None and \
-           self.brisk_menu_available and \
-           self.indicators_available:
-            if self.panel_layout_exists('pantheon'):
-                self.add_to_panel_list(self.layout_list, "Pantheon", "pantheon", layout_thumbnails[14])
-
-        # Prefer Indicator enabled Redmond layout and fallback to non-Indicator version.
-        if self.panel_layout_exists('redmond') and \
-           self.indicators_available and \
+        if self.panel_layout_exists('redmond-no-indicators') and \
            self.mate_menu_available:
-            self.add_to_panel_list(self.layout_list, "Redmond", "redmond", layout_thumbnails[15])
-        elif self.panel_layout_exists('redmond-no-indicators') and \
-           self.mate_menu_available and \
-           not self.indicators_available:
             self.add_to_panel_list(self.layout_list, "Redmond", "redmond-no-indicators", layout_thumbnails[16])
 
         if self.panel_layout_exists('solus') and \
            self.brisk_menu_available:
             self.add_to_panel_list(self.layout_list, "Solus", "solus", layout_thumbnails[17])
-
-        if self.panel_layout_exists('ubuntu-mate') and \
-           self.indicators_available:
-            self.add_to_panel_list(self.layout_list, "Traditional", "ubuntu-mate", layout_thumbnails[18])
 
         print("System installed layouts: ")
         print(self.system_installed_panel_layouts)
@@ -1082,7 +852,6 @@ class MateLayouts:
         self.current_layout = ''
         self.check_dock_features()
         self.check_panel_features()
-        self.check_wm_features()
         self.check_appmenu()
 
         # load helper script
