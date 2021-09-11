@@ -5,6 +5,10 @@ project(
     meson_version: '>=0.50.0'
 )
 
+dependency('pygobject-3.0')
+dependency('gtk+-3.0')
+dependency('libnotify')
+
 prefix = get_option('prefix')
 datadir = get_option('datadir')
 bindir = get_option('bindir')
