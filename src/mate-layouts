@@ -429,7 +429,7 @@ class MateLayouts:
 
         # Determine if the dock should be enabled
         if (os.path.exists(os.path.join('/','usr','share','mate-panel','layouts', new_layout + '.dock')) and self.dock is not None) or \
-           self.is_panel_layout_name_special(new_layout, ['eleven','mutiny','contemporary']):
+           self.is_panel_layout_name_special(new_layout, ['eleven', 'contemporary']):
             print('Found dock hint for ' + new_layout)
             self.enable_dock()
         else:
@@ -591,8 +591,8 @@ class MateLayouts:
         for layout in glob.glob(layouts):
             list_entry = self.get_custom_panel_list_entry(layout)
             image = Gtk.Image()
-            if self.get_right_path('layout-previews/custom.svg'):
-               image.set_from_file(self.get_right_path('layout-previews/custom.svg'))
+            if self.get_right_path('layout-previews/custom-symbolic.svg'):
+               image.set_from_file(self.get_right_path('layout-previews/custom-symbolic.svg'))
             else:
                image.set_from_icon_name('image-missing', 128)
             self.layout_list.insert(0, LayoutItem(self, image, list_entry['displayname'], list_entry['codename']))
@@ -733,13 +733,13 @@ class MateLayouts:
         if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '-symbolic.svg') != '':
            layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '-symbolic.svg'))
         elif layout_item.get_parent().code_name.endswith('tweak'):
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom-logo.svg'))
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom-logo-symbolic.svg'))
 
     def mouse_leave_layout_item(layout_item, event, mate_layouts_object):
         if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-symbolic.svg') != '':
            layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-symbolic.svg'))
         elif layout_item.get_parent().code_name.endswith('tweak'):
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom.svg'))
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom-symbolic.svg'))
 
     def get_right_path(self, suffix):
         if os.path.exists('./data/' + suffix):
