@@ -63,6 +63,28 @@ __CONTEMPORARY_BUTTONS__ = "close,minimize,maximize:"
 __MENU_TRADITIONAL_BUTTONS__ = "menu:minimize,maximize,close"
 __MENU_CONTEMPORARY_BUTTONS__ = "close,minimize,maximize:menu"
 
+__MATE_VOLUME_CONTROL_STATUS_ICON__="""[Desktop Entry]
+Type=Application
+Name=Volume Control
+Comment=Show desktop volume control
+Exec=mate-volume-control-status-icon
+Icon=multimedia-volume-control
+Terminal=false
+StartupNotify=false
+Categories=AudioVideo;Audio;Mixer;GTK;
+NoDisplay=true"""
+
+__VOLCTL_TRAY_ICON__="""[Desktop Entry]
+Type=Application
+Name=Volctl
+Comment=Per-application volume control for GNU/Linux desktops
+Exec=volctl
+Icon=multimedia-volume-control
+Terminal=false
+StartupNotify=false
+Categories=AudioVideo;Audio;Mixer;GTK;
+NoDisplay=true"""
+
 # i18n
 gettext.install('mate-layouts', os.path.join('/','usr','share','locale'))
 
@@ -88,152 +110,127 @@ class MateLayouts:
     system_installed_panel_layouts = []
     layout_list = []
 
-    def schema_has_key(self, schema, key):
-        source = Gio.SettingsSchemaSource.get_default()
-        if source.lookup(schema, True):
-            settings=Gio.Settings.new(schema)
-            schema = settings.get_property('settings-schema')
-            return schema.has_key(key)
-        else:
-            return False
+    ############################
+    ## Check available options
+    ############################
 
-    def set_string(self, schema, path, key, value):
-        if path:
-            settings = Gio.Settings.new_with_path(schema, path)
-        else:
-            settings = Gio.Settings.new(schema)
-        try:
-            settings.set_string(key, value)
-        except:
-            print('Unable set ' + key + ' with ' + value + ' in ' + schema)
-            pass
+    def check_panel_features(self):
+        # Determine what panel features are available
+        self.mate_dock_available = False
+        self.mate_menu_available = False
+        self.mint_menu_available = False
+        self.volctl_available = False
+        self.volume_status_icon_enabled = False
+        self.volctl_tray_icon_enabled = False
+        self.brisk_menu_available = False
+        self.appmenu_applet_available = False
 
-    def get_string(self, schema, path, key):
-        if path:
-            settings = Gio.Settings.new_with_path(schema, path)
-        else:
-            settings = Gio.Settings.new(schema)
-        return settings.get_string(key)
+        if os.path.exists('/usr/lib/mate-applets/mate-dock-applet/dock.py'):
+            self.mate_dock_available = True
 
-    def get_int(self, schema, path, key):
-        if path:
-            settings = Gio.Settings.new_with_path(schema, path)
-        else:
-            settings = Gio.Settings.new(schema)
-        return settings.get_int(key)
+        if os.path.exists('/usr/lib/mate-menu/mate-menu.py'):
+            self.mate_menu_available = True
 
-    def set_int(self, schema, path, key, value):
-        if path:
-            settings = Gio.Settings.new_with_path(schema, path)
-        else:
-            settings = Gio.Settings.new(schema)
-        settings.set_int(key, value)
+        if os.path.exists('/usr/lib/' + self.multiarch + '/brisk-menu/brisk-menu') or \
+            os.path.exists('/usr/lib/brisk-menu/brisk-menu') or \
+             os.path.exists('/usr/libexec/brisk-menu'):
+             if os.path.exists('/usr/share/mate-panel/applets/com.solus_project.brisk.BriskMenu.mate-panel-applet'):
+              self.brisk_menu_available = True
 
-    def get_enum(self, schema, path, key):
-        if path:
-            settings = Gio.Settings.new_with_path(schema, path)
-        else:
-            settings = Gio.Settings.new(schema)
-        return settings.get_enum(key)
+        if (os.path.exists('/usr/lib/' + self.multiarch + '/mate-panel/libappmenu-mate.so') or \
+            os.path.exists('/usr/lib/mate-panel/libappmenu-mate.so')) and \
+            os.path.exists('/usr/share/mate-panel/applets/org.vala-panel.appmenu.mate-panel-applet'):
+            self.appmenu_applet_available = True
 
-    def set_enum(self, schema, path, key, value):
-        if path:
-            settings = Gio.Settings.new_with_path(schema, path)
-        else:
-            settings = Gio.Settings.new(schema)
-        settings.set_enum(key, value)
+        if os.path.exists('/usr/lib/linuxmint/mintMenu/mintMenu.py'):
+            self.mint_menu_available = True
 
-    def get_bool(self, schema, path, key):
-        if path:
-            settings = Gio.Settings.new_with_path(schema, path)
-        else:
-            settings = Gio.Settings.new(schema)
-        return settings.get_boolean(key)
-
-    def set_bool(self, schema, path, key, value):
-        if path:
-            settings = Gio.Settings.new_with_path(schema, path)
-        else:
-            settings = Gio.Settings.new(schema)
-        settings.set_boolean(key, value)
-
-    def reset_dconf_path(self, path):
-        subprocess.call(['dconf', 'reset', '-f', path], stdout=DEVNULL, stderr=DEVNULL)
-
-    def set_dconf_value(self, path, value):
-        subprocess.call(['dconf', 'write', path, value], stdout=DEVNULL, stderr=DEVNULL)
-
-    def get_dconf_value(self, path):
-        dconf = subprocess.Popen(['dconf', 'read', path], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-        dconf_output, dconf_error = dconf.communicate()
-        return dconf_output.decode().strip()
-
-    def process_running(self, name):
-        uid = os.getuid()
-        for process in psutil.process_iter():
-            try:
-                proc = process.as_dict(attrs=['name', 'uids'])
-            except psutil.NoSuchProcess:
-                pass
-            else:
-                if name == proc['name'] and uid == proc['uids'].real:
-                    return True
-        return False
-
-    def kill_process(self, name):
-        uid = os.getuid()
-        for process in psutil.process_iter():
-            try:
-                proc = process.as_dict(attrs=['name', 'pid', 'uids'])
-            except psutil.NoSuchProcess:
-                pass
-            else:
-                if name == proc['name'] and uid == proc['uids'].real:
-                    try:
-                        target = psutil.Process(proc['pid'])
-                        target.kill()
-                    except psutil.NoSuchProcess:
-                        pass
-
-    def find_on_path(self, command):
-        """Is command on the executable search path?"""
-        if 'PATH' not in os.environ:
-            return False
-        path = os.environ['PATH']
-        for element in path.split(os.pathsep):
-            if not element:
-                continue
-            filename = os.path.join(element, command)
-            if os.path.isfile(filename) and os.access(filename, os.X_OK):
-                return True
-        return False
-
-    def mkdir_p(self, path):
-        try:
-            os.makedirs(path)
-        except OSError as exc: # Python >2.5
-            if exc.errno == errno.EEXIST and os.path.isdir(path):
-                pass
-            else:
-                raise
-
-    def create_autostart(self, filename, content):
-        # Create a local autostart only if it is missing from the system path.
-        if not os.path.exists(os.path.join('/','usr','share','mate','autostart',filename)):
-            config_dir = GLib.get_user_config_dir()
-            self.mkdir_p(os.path.join(config_dir, 'autostart/'))
-            if not os.path.exists(os.path.join(config_dir, 'autostart',filename)):
-                with open(os.path.join(config_dir, 'autostart', filename),'w') as autostart:
-                    autostart.write(content)
-
-    def remove_autostart(self, filename):
         config_dir = GLib.get_user_config_dir()
-        autostart_file = os.path.join(config_dir, 'autostart', filename)
-        if os.path.exists(autostart_file):
-            os.remove(autostart_file)
+        if os.path.exists('/etc/xdg/autostart/mate-volume-control-status-icon.desktop') or \
+           os.path.exists(os.path.join(config_dir, 'autostart/') + 'mate-volume-control-status-icon.desktop'):
+            self.volume_status_icon_enabled = True
 
-        # Make sure any system desktop files are also removed
-        subprocess.call(['pkexec', self.mate_layouts_helper, 'autostop', filename], stdout=DEVNULL, stderr=DEVNULL)
+        if os.path.exists('/usr/bin/volctl'):
+            self.volctl_available = True
+
+        if os.path.exists('/etc/xdg/autostart/volctl.desktop') or \
+           os.path.exists(os.path.join(config_dir, 'autostart/') + 'volctl.desktop'):
+            self.volctl_tray_icon_enabled = True
+
+    def make_list_of_panel_layouts(self):
+        for layout_item in self.layout_list:
+           layout_item.get_parent().destroy()
+           Gtk.Widget.destroy(layout_item)
+        self.layout_list.clear()
+        layouts = ['contemporary', 'eleven', 'eleven-no-indicators', 'familiar', 'fedora',
+                   'default', 'linuxmint', 'mageia', 'manjaro', 'mutiny', 'mutiny-no-indicators',
+                   'netbook', 'netbook-no-indicators', 'opensuse', 'pantheon', 'redmond',
+                   'redmond-no-indicators', 'solus', 'ubuntu-mate']
+
+        layout_thumbnails = []
+
+        for layout in layouts:
+           if layout not in layout_thumbnails:
+              image = Gtk.Image()
+              if self.get_right_path('layout-previews/' + layout + '-symbolic.svg'):
+                 image.set_from_file(self.get_right_path('layout-previews/' + layout + '-symbolic.svg'))
+              else:
+                 image.set_from_icon_name('image-missing', 128)
+              layout_thumbnails.append(image)
+
+        if self.dock is not None and \
+           self.appmenu_applet_available and \
+           self.brisk_menu_available:
+            if self.panel_layout_exists('eleven-no-indicators'):
+                self.add_to_panel_list(self.layout_list, "Cupertino", "eleven-no-indicators", layout_thumbnails[2])
+
+        if distro.id() != 'ubuntu' and \
+            self.panel_layout_exists('fedora'):
+            self.add_to_panel_list(self.layout_list, "Fedora", "fedora", layout_thumbnails[4])
+
+        if self.panel_layout_exists('default'):
+            self.add_to_panel_list(self.layout_list, "GNOME 2", "default", layout_thumbnails[5])
+
+        if self.panel_layout_exists('linuxmint') and \
+           self.mint_menu_available:
+            self.add_to_panel_list(self.layout_list, "Linux Mint", "linuxmint", layout_thumbnails[6])
+
+        if self.panel_layout_exists('manjaro') and \
+           self.brisk_menu_available:
+            self.add_to_panel_list(self.layout_list, "Manjaro", "manjaro", layout_thumbnails[8])
+
+        if self.panel_layout_exists('mutiny-no-indicators') and \
+           self.mate_dock_available and \
+           self.appmenu_applet_available:
+            self.add_to_panel_list(self.layout_list, "Mutiny", "mutiny-no-indicators", layout_thumbnails[10])
+
+        if self.panel_layout_exists('opensuse') and \
+           self.mate_menu_available:
+            self.add_to_panel_list(self.layout_list, "openSUSE", "opensuse", layout_thumbnails[13])
+
+        if self.panel_layout_exists('redmond-no-indicators') and \
+           self.mate_menu_available:
+            self.add_to_panel_list(self.layout_list, "Redmond", "redmond-no-indicators", layout_thumbnails[16])
+
+        if self.panel_layout_exists('solus') and \
+           self.brisk_menu_available:
+            self.add_to_panel_list(self.layout_list, "Solus", "solus", layout_thumbnails[17])
+
+        print("System installed layouts: ")
+        print(self.system_installed_panel_layouts)
+
+        # Add any saved panel layouts to the start.
+        layouts = os.path.join('/','usr','share','mate-panel','layouts','*-tweak.layout')
+        for layout in glob.glob(layouts):
+            list_entry = self.get_custom_panel_list_entry(layout)
+            image = Gtk.Image()
+            if self.get_right_path('layout-previews/custom-symbolic.svg'):
+               image.set_from_file(self.get_right_path('layout-previews/custom-symbolic.svg'))
+            else:
+               image.set_from_icon_name('image-missing', 128)
+            self.layout_list.insert(0, LayoutItem(self, image, list_entry['displayname'], list_entry['codename']))
+
+        self.update_layout_view()
 
     def check_appmenu(self):
         self.appmenu_available = False
@@ -241,23 +238,18 @@ class MateLayouts:
             and self.schema_has_key('org.appmenu.gtk-module','blacklist'):
             self.appmenu_available = True
 
-    def enable_dock(self):
-        self.set_string('org.mate.session.required-components', None, 'dock', self.dock)
-        if self.dock:
-            self.remove_autostart(self.dock + '.desktop')
+    def check_dock_features(self):
+        # Order matters. Plank is preferred.
+        if self.find_on_path('plank') and \
+            os.path.exists(os.path.join('/','usr','share','applications', 'plank.desktop')):
+            self.dock = 'plank'
+        else:
+            self.dock = None
 
-        # Launch the dock, if it is not already enabled.
-        print("dock_enabled: ", self.dock_enabled)
-        if not self.dock_enabled:
-            pid = subprocess.Popen([self.dock], stdout=DEVNULL, stderr=DEVNULL).pid
+        if self.dock is not None and self.get_string('org.mate.session.required-components', None, 'dock'):
             self.dock_enabled = True
-
-    def disable_dock(self):
-        self.set_string('org.mate.session.required-components', None, 'dock', '')
-        if self.dock:
-            self.remove_autostart(self.dock + '.desktop')
-        self.kill_process(self.dock)
-        self.dock_enabled = False
+        else:
+            self.dock_enabled = False
 
     def panel_layout_uses(self, applet, panel_layout):
         try:
@@ -326,25 +318,9 @@ class MateLayouts:
 
         return False
 
-    def update_panel_layout_ui(self, panel_layout):
-        if 'tweak' in panel_layout:
-            self.builder.get_object('button_delete_panel').props.sensitive = True
-        else:
-            self.builder.get_object('button_delete_panel').props.sensitive = False
-
-    def reload_panel(self):
-        pid = subprocess.Popen(['mate-panel', '--replace'], stdout=DEVNULL, stderr=DEVNULL).pid
-
-    def confirm_dialog(self):
-        dialog = self.builder.get_object("confirm_dialog")
-        dialog.show_all()
-        response = dialog.run()
-        dialog.hide()
-
-        if (response == Gtk.ResponseType.OK):
-            return True
-
-        return False
+    ##################
+    ## Modify panel
+    ##################
 
     def replace_panel_layout(self, new_layout, called_from_api=False):
         leds_enabled = self.get_bool('org.mate.peripherals-keyboard-xkb.general', None, 'duplicate-leds')
@@ -427,6 +403,24 @@ class MateLayouts:
             cmd = 'dconf load /org/mate/panel/ < /usr/share/mate-panel/layouts/' + new_layout + '.panel'
             subprocess.call(cmd, shell=True, stdout=DEVNULL, stderr=DEVNULL)
 
+        # if changing to fedora layout disable volume tray icon
+        if new_layout.startswith('fedora'):
+            self.remove_autostart('mate-volume-control-status-icon.desktop')
+            self.kill_process('mate-volume-control-status-icon')
+            self.remove_autostart('volctl.desktop')
+            self.kill_process('volctl')
+        elif self.current_layout.startswith('fedora'):
+            self.remove_autostart('mate-volume-control-status-icon.desktop')
+            self.remove_autostart('volctl.desktop')
+            if self.get_enum('org.github.FreaxMATE.mate-layouts', None, 'preferred-volume-control') == 1 and self.volctl_available:
+                self.kill_process('mate-volume-control-status-icon')
+                pid = subprocess.Popen(['volctl'], stdout=DEVNULL, stderr=DEVNULL).pid
+                self.create_autostart('volctl.desktop', __VOLCTL_TRAY_ICON__)
+            else:
+                self.kill_process('volctl')
+                pid = subprocess.Popen(['mate-volume-control-status-icon'], stdout=DEVNULL, stderr=DEVNULL).pid
+                self.create_autostart('mate-volume-control-status-icon.desktop', __MATE_VOLUME_CONTROL_STATUS_ICON__)
+
         # Determine if the dock should be enabled
         if (os.path.exists(os.path.join('/','usr','share','mate-panel','layouts', new_layout + '.dock')) and self.dock is not None) or \
            self.is_panel_layout_name_special(new_layout, ['eleven', 'contemporary']):
@@ -444,6 +438,336 @@ class MateLayouts:
 
         self.current_layout = new_layout
 
+
+
+    def delete_panel(self, widget):
+        # Make certain we don't delete a system installed layout
+        if 'tweak' in self.current_layout:
+            # Get default layout
+            settings = Gio.Settings.new('org.mate.panel')
+            default_layout = GLib.Variant.get_string(settings.get_default_value('default-layout'))
+            old_layout = self.current_layout
+
+            if self.confirm_dialog():
+                delete = subprocess.call(['pkexec', self.mate_layouts_helper, 'delete', old_layout], stdout=DEVNULL, stderr=DEVNULL)
+                Notify.init(_('MATE Layouts'))
+                delete_panel_notify=Notify.Notification.new (_('Panel Layout Deleted'),_('Your panel layout has been deleted: ') + old_layout.replace('-tweak','') , 'dialog-information')
+                delete_panel_notify.show()
+
+                self.make_list_of_panel_layouts()
+                self.replace_panel_layout(default_layout)
+
+                source = Gio.SettingsSchemaSource.get_default()
+
+    def save_panel(self, widget):
+        # layout name dialog
+        layoutname = self.layout_name_dialog()
+        if layoutname is not None:
+            layoutnameprefix = self.get_custom_layout_file_prefix(self.current_layout)
+            print(layoutnameprefix, " ", layoutname)
+            layoutname = layoutnameprefix + layoutname + '-tweak'
+            print('Saving ' + layoutname)
+            if self.panel_layout_exists(layoutname):
+                print('Layout exists. Ignoring that for now and over writting it.')
+
+            backup = subprocess.call([self.mate_layouts_helper, 'backup', layoutname], stdout=DEVNULL, stderr=DEVNULL)
+            if self.dock_enabled:
+                dock = subprocess.call([self.mate_layouts_helper, 'dock', layoutname], stdout=DEVNULL, stderr=DEVNULL)
+            install = subprocess.call(['pkexec', self.mate_layouts_helper, 'install', layoutname], stdout=DEVNULL, stderr=DEVNULL)
+            Notify.init(_('MATE Layouts'))
+            save_panel_notify = Notify.Notification.new (_('Panel Layout Saved'),_('Your panel layout has been saved as ') + layoutname.replace('-tweak',''), 'dialog-information')
+            save_panel_notify.show()
+
+            # Update the currently selected layout.
+            self.make_list_of_panel_layouts()
+
+    def export_panel(self, widget):
+        filename = self.filechooser_dialog_export()
+        if filename == "":
+            return
+        backup = subprocess.call([self.mate_layouts_helper, 'backup', self.current_layout], stdout=DEVNULL, stderr=DEVNULL)
+        if self.dock_enabled:
+            dock = subprocess.call([self.mate_layouts_helper, 'dock', self.current_layout], stdout=DEVNULL, stderr=DEVNULL)
+        install = subprocess.call(['pkexec', self.mate_layouts_helper, 'export', self.current_layout, filename], stdout=DEVNULL, stderr=DEVNULL)
+        Notify.init(_('MATE Layouts'))
+        export_panel_notify = Notify.Notification.new (_('Panel Layout Exported'),_('Your panel layout has been exported as ') + self.current_layout.replace('-tweak',''), 'dialog-information')
+        export_panel_notify.show()
+
+    def import_panel(self, widget):
+        filepath = self.filechooser_dialog_import()
+        if filepath == "":
+            return
+        import_call = subprocess.call([self.mate_layouts_helper, 'import', filepath.rsplit(".")[0]], stdout=DEVNULL, stderr=DEVNULL)
+        install = subprocess.call(['pkexec', self.mate_layouts_helper, 'install', os.path.basename(filepath).rsplit(".")[0]], stdout=DEVNULL, stderr=DEVNULL)
+        Notify.init(_('MATE Layouts'))
+        export_panel_notify = Notify.Notification.new (_('Panel Layout Imported'),_('Your panel layout has been imported as ') + self.current_layout.replace('-tweak',''), 'dialog-information')
+        export_panel_notify.show()
+        # Update the currently selected layout.
+        self.make_list_of_panel_layouts()
+
+
+    ######################
+    ## Gsettings methods
+    ######################
+    def schema_has_key(self, schema, key):
+        source = Gio.SettingsSchemaSource.get_default()
+        if source.lookup(schema, True):
+            settings=Gio.Settings.new(schema)
+            schema = settings.get_property('settings-schema')
+            return schema.has_key(key)
+        else:
+            return False
+
+    def set_string(self, schema, path, key, value):
+        if path:
+            settings = Gio.Settings.new_with_path(schema, path)
+        else:
+            settings = Gio.Settings.new(schema)
+        try:
+            settings.set_string(key, value)
+        except:
+            print('Unable set ' + key + ' with ' + value + ' in ' + schema)
+            pass
+
+    def get_string(self, schema, path, key):
+        if path:
+            settings = Gio.Settings.new_with_path(schema, path)
+        else:
+            settings = Gio.Settings.new(schema)
+        return settings.get_string(key)
+
+    def get_int(self, schema, path, key):
+        if path:
+            settings = Gio.Settings.new_with_path(schema, path)
+        else:
+            settings = Gio.Settings.new(schema)
+        return settings.get_int(key)
+
+    def set_int(self, schema, path, key, value):
+        if path:
+            settings = Gio.Settings.new_with_path(schema, path)
+        else:
+            settings = Gio.Settings.new(schema)
+        settings.set_int(key, value)
+
+    def get_enum(self, schema, path, key):
+        if path:
+            settings = Gio.Settings.new_with_path(schema, path)
+        else:
+            settings = Gio.Settings.new(schema)
+        return settings.get_enum(key)
+
+    def set_enum(self, schema, path, key, value):
+        if path:
+            settings = Gio.Settings.new_with_path(schema, path)
+        else:
+            settings = Gio.Settings.new(schema)
+        settings.set_enum(key, value)
+
+    def get_bool(self, schema, path, key):
+        if path:
+            settings = Gio.Settings.new_with_path(schema, path)
+        else:
+            settings = Gio.Settings.new(schema)
+        return settings.get_boolean(key)
+
+    def set_bool(self, schema, path, key, value):
+        if path:
+            settings = Gio.Settings.new_with_path(schema, path)
+        else:
+            settings = Gio.Settings.new(schema)
+        settings.set_boolean(key, value)
+
+    def reset_dconf_path(self, path):
+        subprocess.call(['dconf', 'reset', '-f', path], stdout=DEVNULL, stderr=DEVNULL)
+
+    def set_dconf_value(self, path, value):
+        subprocess.call(['dconf', 'write', path, value], stdout=DEVNULL, stderr=DEVNULL)
+
+    def get_dconf_value(self, path):
+        dconf = subprocess.Popen(['dconf', 'read', path], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        dconf_output, dconf_error = dconf.communicate()
+        return dconf_output.decode().strip()
+
+
+    def process_running(self, name):
+        uid = os.getuid()
+        for process in psutil.process_iter():
+            try:
+                proc = process.as_dict(attrs=['name', 'uids'])
+            except psutil.NoSuchProcess:
+                pass
+            else:
+                if name == proc['name'] and uid == proc['uids'].real:
+                    return True
+        return False
+
+    def kill_process(self, name):
+        uid = os.getuid()
+        for process in psutil.process_iter():
+            try:
+                proc = process.as_dict(attrs=['name', 'pid', 'uids'])
+            except psutil.NoSuchProcess:
+                pass
+            else:
+                if name == proc['name'] and uid == proc['uids'].real:
+                    try:
+                        target = psutil.Process(proc['pid'])
+                        target.kill()
+                    except psutil.NoSuchProcess:
+                        pass
+
+    def find_on_path(self, command):
+        """Is command on the executable search path?"""
+        if 'PATH' not in os.environ:
+            return False
+        path = os.environ['PATH']
+        for element in path.split(os.pathsep):
+            if not element:
+                continue
+            filename = os.path.join(element, command)
+            if os.path.isfile(filename) and os.access(filename, os.X_OK):
+                return True
+        return False
+
+    def mkdir_p(self, path):
+        try:
+            os.makedirs(path)
+        except OSError as exc: # Python >2.5
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise
+
+    def create_autostart(self, filename, content):
+        # Create a local autostart only if it is missing from the system path.
+        if not os.path.exists(os.path.join('/','usr','share','mate','autostart',filename)):
+            config_dir = GLib.get_user_config_dir()
+            self.mkdir_p(os.path.join(config_dir, 'autostart/'))
+            if not os.path.exists(os.path.join(config_dir, 'autostart',filename)):
+                with open(os.path.join(config_dir, 'autostart', filename),'w') as autostart:
+                    autostart.write(content)
+
+    def remove_autostart(self, filename):
+        config_dir = GLib.get_user_config_dir()
+        autostart_file = os.path.join(config_dir, 'autostart', filename)
+        if os.path.exists(autostart_file):
+            os.remove(autostart_file)
+
+        # Make sure any system desktop files are also removed
+        subprocess.call(['pkexec', self.mate_layouts_helper, 'autostop', filename], stdout=DEVNULL, stderr=DEVNULL)
+
+
+    def enable_dock(self):
+        self.set_string('org.mate.session.required-components', None, 'dock', self.dock)
+        if self.dock:
+            self.remove_autostart(self.dock + '.desktop')
+
+        # Launch the dock, if it is not already enabled.
+        print("dock_enabled: ", self.dock_enabled)
+        if not self.dock_enabled:
+            pid = subprocess.Popen([self.dock], stdout=DEVNULL, stderr=DEVNULL).pid
+            self.dock_enabled = True
+
+    def disable_dock(self):
+        self.set_string('org.mate.session.required-components', None, 'dock', '')
+        if self.dock:
+            self.remove_autostart(self.dock + '.desktop')
+        self.kill_process(self.dock)
+        self.dock_enabled = False
+
+
+    def update_panel_layout_ui(self, panel_layout):
+        if 'tweak' in panel_layout:
+            self.builder.get_object('button_delete_panel').props.sensitive = True
+        else:
+            self.builder.get_object('button_delete_panel').props.sensitive = False
+
+    def reload_panel(self):
+        pid = subprocess.Popen(['mate-panel', '--replace'], stdout=DEVNULL, stderr=DEVNULL).pid
+
+
+    ######################
+    ## Dialogs
+    ######################
+
+    def confirm_dialog(self):
+        dialog = self.builder.get_object("confirm_dialog")
+        dialog.show_all()
+        response = dialog.run()
+        dialog.hide()
+
+        if (response == Gtk.ResponseType.OK):
+            return True
+
+        return False
+
+    def layout_name_dialog(self):
+        dialog = self.builder.get_object("layout_name_dialog")
+        dialog.show_all()
+        response = dialog.run()
+        name = self.builder.get_object("layout_name_dialog_entry").get_text().strip().replace(' ', '-')
+        dialog.hide()
+
+        if (response == Gtk.ResponseType.OK) and (name != ''):
+            return name
+        else:
+            return None
+
+    def filechooser_dialog_export(self):
+        res = self.builder.get_object("filechooser_dialog_export").run()
+        if res == Gtk.ResponseType.OK:
+            self.builder.get_object("filechooser_dialog_export").hide()
+            return self.builder.get_object("filechooser_dialog_export").get_filename()
+        else:
+            self.builder.get_object("filechooser_dialog_export").hide()
+            return ""
+
+    def filechooser_dialog_import(self):
+        res = self.builder.get_object("filechooser_dialog_import").run()
+        if res == Gtk.ResponseType.OK:
+            self.builder.get_object("filechooser_dialog_import").hide()
+            return self.builder.get_object("filechooser_dialog_import").get_filename()
+        else:
+            self.builder.get_object("filechooser_dialog_import").hide()
+            return ""
+
+
+
+    #############################
+    ## frontend helper functions
+    #############################
+
+    def update_layout_view(self):
+        for layout_item in self.layout_list:
+            self.builder.get_object("layout_view").add(layout_item)
+        current_layout_item = self.get_layout_item_by_layout_code_name(self.current_layout)
+        if current_layout_item != None:
+            self.builder.get_object("layout_view").select_child(current_layout_item.get_parent())
+        self.builder.get_object("layout_view").show_all()
+        self.builder.get_object("layout_view").grab_focus()
+
+    def on_layout_view_item_activated(self, layout_view, layout_item):
+        self.update_panel_layout_ui(layout_item.get_child().code_name)
+        self.replace_panel_layout(layout_item.get_child().code_name)
+
+    def mouse_enter_layout_item(layout_item, event, mate_layouts_object):
+        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '-symbolic.svg') != '':
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '-symbolic.svg'))
+        elif layout_item.get_parent().code_name.endswith('tweak'):
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom-logo-symbolic.svg'))
+
+    def mouse_leave_layout_item(layout_item, event, mate_layouts_object):
+        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-symbolic.svg') != '':
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-symbolic.svg'))
+        elif layout_item.get_parent().code_name.endswith('tweak'):
+           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom-symbolic.svg'))
+
+
+    #############################
+    ## backend helper functions
+    #############################
+
     def get_panel_layout(self):
         self.current_layout = self.get_string('org.mate.panel', None, 'default-layout')
 
@@ -455,149 +779,6 @@ class MateLayouts:
     def panel_layout_exists(self, panel_layout):
         return os.path.exists('/usr/share/mate-panel/layouts/' + panel_layout + '.layout')
 
-    def check_dock_features(self):
-        # Order matters. Plank is preferred.
-        if self.find_on_path('plank') and \
-            os.path.exists(os.path.join('/','usr','share','applications', 'plank.desktop')):
-            self.dock = 'plank'
-        else:
-            self.dock = None
-
-        if self.dock is not None and self.get_string('org.mate.session.required-components', None, 'dock'):
-            self.dock_enabled = True
-        else:
-            self.dock_enabled = False
-
-    def check_panel_features(self):
-        # Determine what panel features are available
-        self.mate_dock_available = False
-        self.mate_menu_available = False
-        self.mint_menu_available = False
-        self.volume_applet_enabled = False
-        self.volume_status_icon_enabled = False
-        self.brisk_menu_available = False
-        self.appmenu_applet_available = False
-
-        if os.path.exists('/usr/lib/mate-applets/mate-dock-applet/dock.py'):
-            self.mate_dock_available = True
-
-        if os.path.exists('/usr/lib/mate-menu/mate-menu.py'):
-            self.mate_menu_available = True
-
-        if os.path.exists('/usr/lib/' + self.multiarch + '/brisk-menu/brisk-menu') or \
-            os.path.exists('/usr/lib/brisk-menu/brisk-menu') or \
-             os.path.exists('/usr/libexec/brisk-menu'):
-             if os.path.exists('/usr/share/mate-panel/applets/com.solus_project.brisk.BriskMenu.mate-panel-applet'):
-              self.brisk_menu_available = True
-
-        if (os.path.exists('/usr/lib/' + self.multiarch + '/mate-panel/libappmenu-mate.so') or \
-            os.path.exists('/usr/lib/mate-panel/libappmenu-mate.so')) and \
-            os.path.exists('/usr/share/mate-panel/applets/org.vala-panel.appmenu.mate-panel-applet'):
-            self.appmenu_applet_available = True
-
-        if os.path.exists('/usr/lib/linuxmint/mintMenu/mintMenu.py'):
-            self.mint_menu_available = True
-
-        config_dir = GLib.get_user_config_dir()
-        if os.path.exists('/etc/xdg/autostart/mate-volume-control-applet.desktop') or \
-           os.path.exists(os.path.join(config_dir, 'autostart/') + 'mate-volume-control-applet.desktop'):
-            self.volume_applet_enabled = True
-
-        if os.path.exists('/etc/xdg/autostart/mate-volume-control-status-icon.desktop') or \
-           os.path.exists(os.path.join(config_dir, 'autostart/') + 'mate-volume-control-status-icon.desktop'):
-            self.volume_status_icon_enabled = True
-
-        #print("mate_dock_available: ", self.mate_dock_available)
-        #print("mate_menu_available: ", self.mate_menu_available)
-        #print("mint_menu_available: ", self.mint_menu_available)
-        #print("volume_applet_enabled: ", self.volume_applet_enabled)
-        #print("volume_status_icon_enabled: ", self.volume_status_icon_enabled)
-        #print("brisk_menu_available: ", self.brisk_menu_available)
-        #print("appmenu_applet_available: ", self.appmenu_applet_available)
-
-    def update_layout_view(self):
-        for layout_item in self.layout_list:
-            self.builder.get_object("layout_view").add(layout_item)
-        current_layout_item = self.get_layout_item_by_layout_code_name(self.current_layout)
-        if current_layout_item != None:
-            self.builder.get_object("layout_view").select_child(current_layout_item.get_parent())
-        self.builder.get_object("layout_view").show_all()
-        self.builder.get_object("layout_view").grab_focus()
-
-    def make_list_of_panel_layouts(self):
-        for layout_item in self.layout_list:
-           layout_item.get_parent().destroy()
-           Gtk.Widget.destroy(layout_item)
-        self.layout_list.clear()
-        layouts = ['contemporary', 'eleven', 'eleven-no-indicators', 'familiar', 'fedora',
-                   'default', 'linuxmint', 'mageia', 'manjaro', 'mutiny', 'mutiny-no-indicators',
-                   'netbook', 'netbook-no-indicators', 'opensuse', 'pantheon', 'redmond',
-                   'redmond-no-indicators', 'solus', 'ubuntu-mate']
-
-        layout_thumbnails = []
-
-        for layout in layouts:
-           if layout not in layout_thumbnails:
-              image = Gtk.Image()
-              if self.get_right_path('layout-previews/' + layout + '-symbolic.svg'):
-                 image.set_from_file(self.get_right_path('layout-previews/' + layout + '-symbolic.svg'))
-              else:
-                 image.set_from_icon_name('image-missing', 128)
-              layout_thumbnails.append(image)
-
-        if self.dock is not None and \
-           self.appmenu_applet_available and \
-           self.brisk_menu_available:
-            if self.panel_layout_exists('eleven-no-indicators'):
-                self.add_to_panel_list(self.layout_list, "Cupertino", "eleven-no-indicators", layout_thumbnails[2])
-
-        if distro.id() != 'ubuntu' and \
-            self.panel_layout_exists('fedora'):
-            self.add_to_panel_list(self.layout_list, "Fedora", "fedora", layout_thumbnails[4])
-
-        if self.panel_layout_exists('default'):
-            self.add_to_panel_list(self.layout_list, "GNOME 2", "default", layout_thumbnails[5])
-
-        if self.panel_layout_exists('linuxmint') and \
-           self.mint_menu_available:
-            self.add_to_panel_list(self.layout_list, "Linux Mint", "linuxmint", layout_thumbnails[6])
-
-        if self.panel_layout_exists('manjaro') and \
-           self.brisk_menu_available:
-            self.add_to_panel_list(self.layout_list, "Manjaro", "manjaro", layout_thumbnails[8])
-
-        if self.panel_layout_exists('mutiny-no-indicators') and \
-           self.mate_dock_available and \
-           self.appmenu_applet_available:
-            self.add_to_panel_list(self.layout_list, "Mutiny", "mutiny-no-indicators", layout_thumbnails[10])
-
-        if self.panel_layout_exists('opensuse') and \
-           self.mate_menu_available:
-            self.add_to_panel_list(self.layout_list, "openSUSE", "opensuse", layout_thumbnails[13])
-
-        if self.panel_layout_exists('redmond-no-indicators') and \
-           self.mate_menu_available:
-            self.add_to_panel_list(self.layout_list, "Redmond", "redmond-no-indicators", layout_thumbnails[16])
-
-        if self.panel_layout_exists('solus') and \
-           self.brisk_menu_available:
-            self.add_to_panel_list(self.layout_list, "Solus", "solus", layout_thumbnails[17])
-
-        print("System installed layouts: ")
-        print(self.system_installed_panel_layouts)
-
-        # Add any saved panel layouts to the start.
-        layouts = os.path.join('/','usr','share','mate-panel','layouts','*-tweak.layout')
-        for layout in glob.glob(layouts):
-            list_entry = self.get_custom_panel_list_entry(layout)
-            image = Gtk.Image()
-            if self.get_right_path('layout-previews/custom-symbolic.svg'):
-               image.set_from_file(self.get_right_path('layout-previews/custom-symbolic.svg'))
-            else:
-               image.set_from_icon_name('image-missing', 128)
-            self.layout_list.insert(0, LayoutItem(self, image, list_entry['displayname'], list_entry['codename']))
-
-        self.update_layout_view()
 
     def add_to_panel_list(self, panel_list_store, item_display_name, item_code_name, item_thumbnail):
        self.layout_list.append(LayoutItem(self, item_thumbnail, _(item_display_name), item_code_name))
@@ -629,118 +810,6 @@ class MateLayouts:
 
         return result
 
-    def ask_for_layout_name(self):
-        dialog = self.builder.get_object("layout_name_dialog")
-        dialog.show_all()
-        response = dialog.run()
-        name = self.builder.get_object("layout_name_dialog_entry").get_text().strip().replace(' ', '-')
-        dialog.hide()
-
-        if (response == Gtk.ResponseType.OK) and (name != ''):
-            return name
-        else:
-            return None
-
-
-    def delete_panel(self, widget):
-        # Make certain we don't delete a system installed layout
-        if 'tweak' in self.current_layout:
-            # Get default layout
-            settings = Gio.Settings.new('org.mate.panel')
-            default_layout = GLib.Variant.get_string(settings.get_default_value('default-layout'))
-            old_layout = self.current_layout
-
-            if self.confirm_dialog():
-                delete = subprocess.call(['pkexec', self.mate_layouts_helper, 'delete', old_layout], stdout=DEVNULL, stderr=DEVNULL)
-                Notify.init(_('MATE Layouts'))
-                delete_panel_notify=Notify.Notification.new (_('Panel Layout Deleted'),_('Your panel layout has been deleted: ') + old_layout.replace('-tweak','') , 'dialog-information')
-                delete_panel_notify.show()
-
-                self.make_list_of_panel_layouts()
-                self.replace_panel_layout(default_layout)
-
-                source = Gio.SettingsSchemaSource.get_default()
-
-    def save_panel(self, widget):
-        # layout name dialog
-        layoutname = self.ask_for_layout_name()
-        if layoutname is not None:
-            layoutnameprefix = self.get_custom_layout_file_prefix(self.current_layout)
-            print(layoutnameprefix, " ", layoutname)
-            layoutname = layoutnameprefix + layoutname + '-tweak'
-            print('Saving ' + layoutname)
-            if self.panel_layout_exists(layoutname):
-                print('Layout exists. Ignoring that for now and over writting it.')
-
-            backup = subprocess.call([self.mate_layouts_helper, 'backup', layoutname], stdout=DEVNULL, stderr=DEVNULL)
-            if self.dock_enabled:
-                dock = subprocess.call([self.mate_layouts_helper, 'dock', layoutname], stdout=DEVNULL, stderr=DEVNULL)
-            install = subprocess.call(['pkexec', self.mate_layouts_helper, 'install', layoutname], stdout=DEVNULL, stderr=DEVNULL)
-            Notify.init(_('MATE Layouts'))
-            save_panel_notify = Notify.Notification.new (_('Panel Layout Saved'),_('Your panel layout has been saved as ') + layoutname.replace('-tweak',''), 'dialog-information')
-            save_panel_notify.show()
-
-            # Update the currently selected layout.
-            self.make_list_of_panel_layouts()
-
-    def filechooser_dialog_export(self):
-        res = self.builder.get_object("filechooser_dialog_export").run()
-        if res == Gtk.ResponseType.OK:
-            self.builder.get_object("filechooser_dialog_export").hide()
-            return self.builder.get_object("filechooser_dialog_export").get_filename()
-        else:
-            self.builder.get_object("filechooser_dialog_export").hide()
-            return ""
-
-    def export_panel(self, widget):
-        filename = self.filechooser_dialog_export()
-        if filename == "":
-            return
-        backup = subprocess.call([self.mate_layouts_helper, 'backup', self.current_layout], stdout=DEVNULL, stderr=DEVNULL)
-        if self.dock_enabled:
-            dock = subprocess.call([self.mate_layouts_helper, 'dock', self.current_layout], stdout=DEVNULL, stderr=DEVNULL)
-        install = subprocess.call(['pkexec', self.mate_layouts_helper, 'export', self.current_layout, filename], stdout=DEVNULL, stderr=DEVNULL)
-        Notify.init(_('MATE Layouts'))
-        export_panel_notify = Notify.Notification.new (_('Panel Layout Exported'),_('Your panel layout has been exported as ') + self.current_layout.replace('-tweak',''), 'dialog-information')
-        export_panel_notify.show()
-
-    def filechooser_dialog_import(self):
-        res = self.builder.get_object("filechooser_dialog_import").run()
-        if res == Gtk.ResponseType.OK:
-            self.builder.get_object("filechooser_dialog_import").hide()
-            return self.builder.get_object("filechooser_dialog_import").get_filename()
-        else:
-            self.builder.get_object("filechooser_dialog_import").hide()
-            return ""
-
-    def import_panel(self, widget):
-        filepath = self.filechooser_dialog_import()
-        if filepath == "":
-            return
-        import_call = subprocess.call([self.mate_layouts_helper, 'import', filepath.rsplit(".")[0]], stdout=DEVNULL, stderr=DEVNULL)
-        install = subprocess.call(['pkexec', self.mate_layouts_helper, 'install', os.path.basename(filepath).rsplit(".")[0]], stdout=DEVNULL, stderr=DEVNULL)
-        Notify.init(_('MATE Layouts'))
-        export_panel_notify = Notify.Notification.new (_('Panel Layout Imported'),_('Your panel layout has been imported as ') + self.current_layout.replace('-tweak',''), 'dialog-information')
-        export_panel_notify.show()
-        # Update the currently selected layout.
-        self.make_list_of_panel_layouts()
-
-    def on_layout_view_item_activated(self, layout_view, layout_item):
-        self.update_panel_layout_ui(layout_item.get_child().code_name)
-        self.replace_panel_layout(layout_item.get_child().code_name)
-
-    def mouse_enter_layout_item(layout_item, event, mate_layouts_object):
-        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '-symbolic.svg') != '':
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-logo' + '-symbolic.svg'))
-        elif layout_item.get_parent().code_name.endswith('tweak'):
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom-logo-symbolic.svg'))
-
-    def mouse_leave_layout_item(layout_item, event, mate_layouts_object):
-        if mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-symbolic.svg') != '':
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/' + layout_item.get_parent().code_name + '-symbolic.svg'))
-        elif layout_item.get_parent().code_name.endswith('tweak'):
-           layout_item.get_parent().image.set_from_file(mate_layouts_object.get_right_path('layout-previews/custom-symbolic.svg'))
-
     def get_right_path(self, suffix):
         if os.path.exists('./data/' + suffix):
            return './data/' + suffix
@@ -758,8 +827,6 @@ class MateLayouts:
            return '/usr/libexec/' + suffix
         elif os.path.exists('/bin/' + suffix):
            return '/bin/' + suffix
-        elif os.path.exists('@CUSTOM_LIB_DIR@' + suffix):
-           return '@CUSTOM_LIB_DIR@' + suffix
         else:
            return ''
 
@@ -769,7 +836,11 @@ class MateLayouts:
              return layout_item
        return None
 
-    ''' Create the UI '''
+
+    #############################
+    ## init function
+    #############################
+
     def __init__(self, called_from_api=False):
         self.multiarch = sysconfig.get_config_var('MULTIARCH')
         self.current_layout = ''
@@ -778,17 +849,20 @@ class MateLayouts:
         self.check_appmenu()
 
         # load helper script
-        self.mate_layouts_helper = self.get_right_path('mate-layouts-helper')
+        if os.path.exists('mate-layouts-helper'):
+            self.mate_layouts_helper = 'mate-layouts-helper'
+        elif os.path.exists('@HELPER_DIR@mate-layouts-helper'):
+            self.mate_layouts_helper = '@HELPER_DIR@mate-layouts-helper'
         if self.mate_layouts_helper == '':
            print('ERROR! Unable to find \'mate-layouts-helper\' script.')
 
         # Load the Glade UI file
         self.builder = Gtk.Builder()
-        if self.get_right_path('org.github.FreaxMATE.mate-layouts.ui').startswith('.'):
+        if os.path.exists('../data/org.github.FreaxMATE.mate-layouts.ui'):
             print('Development mode.')
-            self.builder.add_from_file(self.get_right_path('org.github.FreaxMATE.mate-layouts.ui'))
-        elif self.get_right_path('org.github.FreaxMATE.mate-layouts.ui'):
-            self.builder.add_from_file(self.get_right_path('org.github.FreaxMATE.mate-layouts.ui'))
+            self.builder.add_from_file('../data/org.github.FreaxMATE.mate-layouts.ui')
+        elif os.path.exists('@GLADE_DIR@/org.github.FreaxMATE.mate-layouts.ui'):
+            self.builder.add_from_file('@GLADE_DIR@/org.github.FreaxMATE.mate-layouts.ui')
         else:
             print("ERROR! Unable to find glade file.")
 

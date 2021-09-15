@@ -14,13 +14,13 @@ datadir = get_option('datadir')
 bindir = get_option('bindir')
 libdir = get_option('libdir')
 policydir = join_paths(datadir, 'polkit-1/actions')
-gladedir = join_paths(datadir, 'mate-layouts/')
+genericdir = join_paths(datadir, 'mate-layouts/')
 icondir = join_paths(datadir, 'icons/hicolor/')
-layoutsdir = join_paths(datadir, 'mate-layouts/')
+schemadir = join_paths(datadir, 'glib-2.0/schemas')
 
 conf_data = configuration_data()
-conf_data.set('HELPER_PATH', join_paths(prefix, libdir, 'mate-layouts/mate-layouts-helper'))
-conf_data.set('CUSTOM_LIB_DIR', join_paths(prefix, libdir, 'mate-layouts/'))
+conf_data.set('HELPER_DIR', join_paths(prefix, libdir, 'mate-layouts/'))
+conf_data.set('GLADE_DIR', join_paths(prefix, datadir, 'mate-layouts/'))
 
 # Python scripts
 configure_file(input: 'src/mate-layouts', output: 'mate-layouts', install_dir: bindir, install: true, configuration: conf_data)
@@ -30,7 +30,8 @@ configure_file(input: 'src/mate-layouts-helper', output: 'mate-layouts-helper', 
 configure_file(input: 'data/org.github.FreaxMATE.mate-layouts.appdata.xml',output: 'org.github.FreaxMATE.mate-layouts.appdata.xml',install_dir: join_paths(datadir, 'metainfo'),install: true,configuration: conf_data)
 configure_file(input: 'data/org.github.FreaxMATE.mate-layouts.desktop',output: 'org.github.FreaxMATE.mate-layouts.desktop',install_dir: join_paths(datadir, 'applications'),install: true,configuration: conf_data)
 configure_file(input: 'data/org.github.FreaxMATE.mate-layouts.policy',output: 'org.github.FreaxMATE.mate-layouts.policy',install_dir: policydir,install: true,configuration: conf_data)
-configure_file(input: 'data/org.github.FreaxMATE.mate-layouts.ui',output: 'org.github.FreaxMATE.mate-layouts.ui',install_dir: gladedir,install: true,configuration: conf_data)
+configure_file(input: 'data/org.github.FreaxMATE.mate-layouts.ui',output: 'org.github.FreaxMATE.mate-layouts.ui',install_dir: genericdir,install: true,configuration: conf_data)
+install_data(['data/org.github.FreaxMATE.mate-layouts.gschema.xml',], install_dir: schemadir)
 
 # Icons
 install_data(['data/icons/hicolor/16x16/apps/org.github.FreaxMATE.mate-layouts.png',], install_dir: join_paths(icondir,'16x16/apps/'))
@@ -49,7 +50,7 @@ install_data(['data/icons/hicolor/1024x1024/apps/org.github.FreaxMATE.mate-layou
 install_data(['data/icons/hicolor/scalable/apps/org.github.FreaxMATE.mate-layouts.svg',], install_dir: join_paths(icondir,'scalable/apps/'))
 
 # Layouts previews
-install_subdir('data/layout-previews/', install_dir : layoutsdir)
+install_subdir('data/layout-previews/', install_dir : genericdir)
 
 meson.add_install_script('meson-post-install.py')
 
