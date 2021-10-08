@@ -74,7 +74,7 @@ StartupNotify=false
 Categories=AudioVideo;Audio;Mixer;GTK;
 NoDisplay=true"""
 
-__VOLCTL_TRAY_ICON__="""[Desktop Entry]
+__VOLCTL_ICON__="""[Desktop Entry]
 Type=Application
 Name=Volctl
 Comment=Per-application volume control for GNU/Linux desktops
@@ -415,7 +415,7 @@ class MateLayouts:
             if self.get_enum('org.github.FreaxMATE.mate-layouts', None, 'preferred-volume-control') == 1 and self.volctl_available:
                 self.kill_process('mate-volume-control-status-icon')
                 pid = subprocess.Popen(['volctl'], stdout=DEVNULL, stderr=DEVNULL).pid
-                self.create_autostart('volctl.desktop', __VOLCTL_TRAY_ICON__)
+                self.create_autostart('volctl.desktop', __VOLCTL_ICON__)
             else:
                 self.kill_process('volctl')
                 pid = subprocess.Popen(['mate-volume-control-status-icon'], stdout=DEVNULL, stderr=DEVNULL).pid
@@ -648,6 +648,14 @@ class MateLayouts:
                 with open(os.path.join(config_dir, 'autostart', filename),'w') as autostart:
                     autostart.write(content)
 
+    def autostart_exists(self, filename):
+        config_dir = GLib.get_user_config_dir()
+        if os.path.exists('/etc/xdg/autostart/' + filename) or \
+            os.path.exists(os.path.join(config_dir, 'autostart/') + filename):
+            return True
+        else:
+            return False
+
     def remove_autostart(self, filename):
         config_dir = GLib.get_user_config_dir()
         autostart_file = os.path.join(config_dir, 'autostart', filename)
@@ -768,6 +776,22 @@ class MateLayouts:
     ## backend helper functions
     #############################
 
+    def set_volume_control(self, volumecontrol):
+        if volumecontrol == 'volctl':
+            self.kill_process('mate-volume-control-status-icon')
+            self.remove_autostart('mate-volume-control-status-icon.desktop')
+            if not self.process_running('volctl'):
+                pid = subprocess.Popen(['volctl'], stdout=DEVNULL, stderr=DEVNULL).pid
+            if not self.autostart_exists('volctl.desktop'):
+                self.create_autostart('volctl.desktop', __MATE_VOLUME_CONTROL_STATUS_ICON__)
+        elif volumecontrol == 'mate-volume-control-status-icon':
+            self.kill_process('volctl')
+            self.remove_autostart('volctl.desktop')
+            if not self.process_running('mate-volume-control-status-icon'):
+                pid = subprocess.Popen(['mate-volume-control-status-icon'], stdout=DEVNULL, stderr=DEVNULL).pid
+            if not self.autostart_exists('mate-volume-control-status-icon.desktop'):
+                self.create_autostart('mate-volume-control-status-icon.desktop', __MATE_VOLUME_CONTROL_STATUS_ICON__)
+
     def get_panel_layout(self):
         self.current_layout = self.get_string('org.mate.panel', None, 'default-layout')
 
@@ -887,6 +911,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--layout', help="Switch to a panel layout")
+    parser.add_argument('--volumecontrol', help="Switch volume-control [volctl, mate-volume-control-status-icon]")
     parser.add_argument('--get-layout', action='store_true', help="Get the current panel layout")
     args = parser.parse_args()
 
@@ -897,6 +922,9 @@ if __name__ == "__main__":
             ml.replace_panel_layout(args.layout, True)
         else:
             print("ERROR! Unable to find layout: " + args.layout)
+    elif args.volumecontrol:
+        ml = MateLayouts(called_from_api=True)
+        ml.set_volume_control(args.volumecontrol)
     elif args.get_layout:
         ml = MateLayouts()
     else:
