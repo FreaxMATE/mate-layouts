@@ -783,7 +783,7 @@ class MateLayouts:
             if not self.process_running('volctl'):
                 pid = subprocess.Popen(['volctl'], stdout=DEVNULL, stderr=DEVNULL).pid
             if not self.autostart_exists('volctl.desktop'):
-                self.create_autostart('volctl.desktop', __MATE_VOLUME_CONTROL_STATUS_ICON__)
+                self.create_autostart('volctl.desktop', __VOLCTL_ICON__)
         elif volumecontrol == 'mate-volume-control-status-icon':
             self.kill_process('volctl')
             self.remove_autostart('volctl.desktop')
