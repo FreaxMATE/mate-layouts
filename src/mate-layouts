@@ -63,28 +63,6 @@ __CONTEMPORARY_BUTTONS__ = "close,minimize,maximize:"
 __MENU_TRADITIONAL_BUTTONS__ = "menu:minimize,maximize,close"
 __MENU_CONTEMPORARY_BUTTONS__ = "close,minimize,maximize:menu"
 
-__MATE_VOLUME_CONTROL_STATUS_ICON__="""[Desktop Entry]
-Type=Application
-Name=Volume Control
-Comment=Show desktop volume control
-Exec=mate-volume-control-status-icon
-Icon=multimedia-volume-control
-Terminal=false
-StartupNotify=false
-Categories=AudioVideo;Audio;Mixer;GTK;
-NoDisplay=true"""
-
-__VOLCTL_ICON__="""[Desktop Entry]
-Type=Application
-Name=Volctl
-Comment=Per-application volume control for GNU/Linux desktops
-Exec=volctl
-Icon=multimedia-volume-control
-Terminal=false
-StartupNotify=false
-Categories=AudioVideo;Audio;Mixer;GTK;
-NoDisplay=true"""
-
 # i18n
 gettext.install('mate-layouts', os.path.join('/','usr','share','locale'))
 
@@ -116,14 +94,17 @@ class MateLayouts:
 
     def check_panel_features(self):
         # Determine what panel features are available
+        self.indicators_available = False
         self.mate_dock_available = False
         self.mate_menu_available = False
         self.mint_menu_available = False
-        self.volctl_available = False
         self.volume_status_icon_enabled = False
-        self.volctl_tray_icon_enabled = False
         self.brisk_menu_available = False
         self.appmenu_applet_available = False
+
+        if os.path.exists('/usr/lib/ayatana-indicators3/7/libayatana-application.so') and \
+            os.path.exists('/usr/share/mate-panel/applets/org.mate.applets.Indicator.mate-panel-applet'):
+                self.indicators_available = True
 
         if os.path.exists('/usr/lib/mate-applets/mate-dock-applet/dock.py'):
             self.mate_dock_available = True
@@ -144,18 +125,6 @@ class MateLayouts:
 
         if os.path.exists('/usr/lib/linuxmint/mintMenu/mintMenu.py'):
             self.mint_menu_available = True
-
-        config_dir = GLib.get_user_config_dir()
-        if os.path.exists('/etc/xdg/autostart/mate-volume-control-status-icon.desktop') or \
-           os.path.exists(os.path.join(config_dir, 'autostart/') + 'mate-volume-control-status-icon.desktop'):
-            self.volume_status_icon_enabled = True
-
-        if os.path.exists('/usr/bin/volctl'):
-            self.volctl_available = True
-
-        if os.path.exists('/etc/xdg/autostart/volctl.desktop') or \
-           os.path.exists(os.path.join(config_dir, 'autostart/') + 'volctl.desktop'):
-            self.volctl_tray_icon_enabled = True
 
     def make_list_of_panel_layouts(self):
         for layout_item in self.layout_list:
@@ -180,12 +149,12 @@ class MateLayouts:
 
         if self.dock is not None and \
            self.appmenu_applet_available and \
-           self.brisk_menu_available:
-            if self.panel_layout_exists('eleven-no-indicators'):
-                self.add_to_panel_list(self.layout_list, "Cupertino", "eleven-no-indicators", layout_thumbnails[2])
+           self.brisk_menu_available and \
+           self.indicators_available:
+            if self.panel_layout_exists('eleven'):
+                self.add_to_panel_list(self.layout_list, "Cupertino", "eleven", layout_thumbnails[2])
 
-        if distro.id() != 'ubuntu' and \
-            self.panel_layout_exists('fedora'):
+        if self.panel_layout_exists('fedora'):
             self.add_to_panel_list(self.layout_list, "Fedora", "fedora", layout_thumbnails[4])
 
         if self.panel_layout_exists('default'):
@@ -199,18 +168,20 @@ class MateLayouts:
            self.brisk_menu_available:
             self.add_to_panel_list(self.layout_list, "Manjaro", "manjaro", layout_thumbnails[8])
 
-        if self.panel_layout_exists('mutiny-no-indicators') and \
+        if self.panel_layout_exists('mutiny') and \
            self.mate_dock_available and \
-           self.appmenu_applet_available:
-            self.add_to_panel_list(self.layout_list, "Mutiny", "mutiny-no-indicators", layout_thumbnails[10])
+           self.appmenu_applet_available and \
+           self.indicators_available:
+            self.add_to_panel_list(self.layout_list, "Mutiny", "mutiny", layout_thumbnails[10])
 
         if self.panel_layout_exists('opensuse') and \
            self.mate_menu_available:
             self.add_to_panel_list(self.layout_list, "openSUSE", "opensuse", layout_thumbnails[13])
 
-        if self.panel_layout_exists('redmond-no-indicators') and \
-           self.mate_menu_available:
-            self.add_to_panel_list(self.layout_list, "Redmond", "redmond-no-indicators", layout_thumbnails[16])
+        if self.panel_layout_exists('redmond') and \
+           self.mate_menu_available and \
+           self.indicators_available:
+            self.add_to_panel_list(self.layout_list, "Redmond", "redmond", layout_thumbnails[16])
 
         if self.panel_layout_exists('solus') and \
            self.brisk_menu_available:
@@ -402,24 +373,6 @@ class MateLayouts:
             print('Loading additional panel configuration for ' + new_layout)
             cmd = 'dconf load /org/mate/panel/ < /usr/share/mate-panel/layouts/' + new_layout + '.panel'
             subprocess.call(cmd, shell=True, stdout=DEVNULL, stderr=DEVNULL)
-
-        # if changing to fedora layout disable volume tray icon
-        if new_layout.startswith('fedora'):
-            self.remove_autostart('mate-volume-control-status-icon.desktop')
-            self.kill_process('mate-volume-control-status-icon')
-            self.remove_autostart('volctl.desktop')
-            self.kill_process('volctl')
-        elif self.current_layout.startswith('fedora'):
-            self.remove_autostart('mate-volume-control-status-icon.desktop')
-            self.remove_autostart('volctl.desktop')
-            if self.get_enum('org.github.FreaxMATE.mate-layouts', None, 'preferred-volume-control') == 1 and self.volctl_available:
-                self.kill_process('mate-volume-control-status-icon')
-                pid = subprocess.Popen(['volctl'], stdout=DEVNULL, stderr=DEVNULL).pid
-                self.create_autostart('volctl.desktop', __VOLCTL_ICON__)
-            else:
-                self.kill_process('volctl')
-                pid = subprocess.Popen(['mate-volume-control-status-icon'], stdout=DEVNULL, stderr=DEVNULL).pid
-                self.create_autostart('mate-volume-control-status-icon.desktop', __MATE_VOLUME_CONTROL_STATUS_ICON__)
 
         # Determine if the dock should be enabled
         if (os.path.exists(os.path.join('/','usr','share','mate-panel','layouts', new_layout + '.dock')) and self.dock is not None) or \
@@ -776,22 +729,6 @@ class MateLayouts:
     ## backend helper functions
     #############################
 
-    def set_volume_control(self, volumecontrol):
-        if volumecontrol == 'volctl':
-            self.kill_process('mate-volume-control-status-icon')
-            self.remove_autostart('mate-volume-control-status-icon.desktop')
-            if not self.process_running('volctl'):
-                pid = subprocess.Popen(['volctl'], stdout=DEVNULL, stderr=DEVNULL).pid
-            if not self.autostart_exists('volctl.desktop'):
-                self.create_autostart('volctl.desktop', __VOLCTL_ICON__)
-        elif volumecontrol == 'mate-volume-control-status-icon':
-            self.kill_process('volctl')
-            self.remove_autostart('volctl.desktop')
-            if not self.process_running('mate-volume-control-status-icon'):
-                pid = subprocess.Popen(['mate-volume-control-status-icon'], stdout=DEVNULL, stderr=DEVNULL).pid
-            if not self.autostart_exists('mate-volume-control-status-icon.desktop'):
-                self.create_autostart('mate-volume-control-status-icon.desktop', __MATE_VOLUME_CONTROL_STATUS_ICON__)
-
     def get_panel_layout(self):
         self.current_layout = self.get_string('org.mate.panel', None, 'default-layout')
 
@@ -871,6 +808,7 @@ class MateLayouts:
         self.check_dock_features()
         self.check_panel_features()
         self.check_appmenu()
+        self.mate_layouts_helper = ''
 
         # load helper script
         if os.path.exists('mate-layouts-helper'):
@@ -911,7 +849,6 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--layout', help="Switch to a panel layout")
-    parser.add_argument('--volumecontrol', help="Switch volume-control [volctl, mate-volume-control-status-icon]")
     parser.add_argument('--get-layout', action='store_true', help="Get the current panel layout")
     args = parser.parse_args()
 
@@ -922,9 +859,6 @@ if __name__ == "__main__":
             ml.replace_panel_layout(args.layout, True)
         else:
             print("ERROR! Unable to find layout: " + args.layout)
-    elif args.volumecontrol:
-        ml = MateLayouts(called_from_api=True)
-        ml.set_volume_control(args.volumecontrol)
     elif args.get_layout:
         ml = MateLayouts()
     else:
