@@ -134,7 +134,7 @@ class MateLayouts:
         layouts = ['contemporary', 'eleven', 'eleven-no-indicators', 'familiar', 'fedora',
                    'default', 'linuxmint', 'mageia', 'manjaro', 'mutiny', 'mutiny-no-indicators',
                    'netbook', 'netbook-no-indicators', 'opensuse', 'pantheon', 'redmond',
-                   'redmond-no-indicators', 'solus', 'ubuntu-mate']
+                   'redmond-no-indicators', 'solus', 'ubuntu-mate', 'gnome2']
 
         layout_thumbnails = []
 
@@ -144,7 +144,7 @@ class MateLayouts:
               if self.get_right_path('layout-previews/' + layout + '-symbolic.svg'):
                  image.set_from_file(self.get_right_path('layout-previews/' + layout + '-symbolic.svg'))
               else:
-                 image.set_from_icon_name('image-missing', 128)
+                 image.set_from_icon_name('image-missing', Gtk.IconSize.DIALOG)
               layout_thumbnails.append(image)
 
         if self.dock is not None and \
@@ -186,6 +186,11 @@ class MateLayouts:
         if self.panel_layout_exists('solus') and \
            self.brisk_menu_available:
             self.add_to_panel_list(self.layout_list, "Solus", "solus", layout_thumbnails[17])
+
+        if self.panel_layout_exists('gnome2') and \
+           self.indicators_available:
+            self.add_to_panel_list(self.layout_list, "GNOME 2", "gnome2", layout_thumbnails[19])
+
 
         print("System installed layouts: ")
         print(self.system_installed_panel_layouts)
