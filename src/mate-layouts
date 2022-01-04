@@ -154,18 +154,9 @@ class MateLayouts:
             if self.panel_layout_exists('eleven'):
                 self.add_to_panel_list(self.layout_list, "Cupertino", "eleven", layout_thumbnails[2])
 
-        if self.panel_layout_exists('fedora'):
-            self.add_to_panel_list(self.layout_list, "Fedora", "fedora", layout_thumbnails[4])
-
-        if self.panel_layout_exists('default'):
-            self.add_to_panel_list(self.layout_list, "GNOME 2", "default", layout_thumbnails[5])
-
-        if self.panel_layout_exists('linuxmint') and \
-           self.mint_menu_available:
-            self.add_to_panel_list(self.layout_list, "Linux Mint", "linuxmint", layout_thumbnails[6])
-
         if self.panel_layout_exists('manjaro') and \
-           self.brisk_menu_available:
+           self.brisk_menu_available and \
+           self.indicators_available::
             self.add_to_panel_list(self.layout_list, "Manjaro", "manjaro", layout_thumbnails[8])
 
         if self.panel_layout_exists('mutiny') and \
@@ -174,18 +165,10 @@ class MateLayouts:
            self.indicators_available:
             self.add_to_panel_list(self.layout_list, "Mutiny", "mutiny", layout_thumbnails[10])
 
-        if self.panel_layout_exists('opensuse') and \
-           self.mate_menu_available:
-            self.add_to_panel_list(self.layout_list, "openSUSE", "opensuse", layout_thumbnails[13])
-
         if self.panel_layout_exists('redmond') and \
            self.mate_menu_available and \
            self.indicators_available:
             self.add_to_panel_list(self.layout_list, "Redmond", "redmond", layout_thumbnails[16])
-
-        if self.panel_layout_exists('solus') and \
-           self.brisk_menu_available:
-            self.add_to_panel_list(self.layout_list, "Solus", "solus", layout_thumbnails[17])
 
         if self.panel_layout_exists('gnome2') and \
            self.indicators_available:
