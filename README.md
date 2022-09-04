@@ -24,7 +24,7 @@ sudo pacman -S python-distutils-extra
 
 #### Debian / Ubuntu:
 ```bash 
-sudo apt install python3-pip python3-distutils python3-distutils-extra python3-psutil python3-setproctitle libnotify-dev dconf-cli
+sudo apt install python3-pip python3-distutils python3-distutils-extra python3-psutil python3-setproctitle python-gi-dev libnotify-dev dconf-cli
 ```
 
 
