@@ -1,8 +1,10 @@
 <schemalist>
+	<schema id="org.github.FreaxMATE.mate-layouts" path="/org/github/FreaxMATE/mate-layouts/">
 		<key name="show-only-ayatana-layouts" type="b">
 			<default>true</default>
 			<summary>Whether the settings has already been migrated from the previous version</summary>
 			<description>
 			</description>
 		</key>
+	</schema>
 </schemalist>
